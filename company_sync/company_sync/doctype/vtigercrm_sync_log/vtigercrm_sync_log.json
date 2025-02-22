@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-06 15:17:31.530507",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "vtigercrm_sync",
+  "row_indexes",
+  "success",
+  "docname",
+  "messages",
+  "exception",
+  "log_index"
+ ],
+ "fields": [
+  {
+   "fieldname": "vtigercrm_sync",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "VTigerCRM Sync",
+   "options": "VTigerCRM Sync"
+  },
+  {
+   "fieldname": "row_indexes",
+   "fieldtype": "Code",
+   "label": "Row Indexes",
+   "options": "JSON"
+  },
+  {
+   "default": "0",
+   "fieldname": "success",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Success"
+  },
+  {
+   "fieldname": "docname",
+   "fieldtype": "Data",
+   "label": "Reference Name"
+  },
+  {
+   "fieldname": "messages",
+   "fieldtype": "Code",
+   "label": "Messages",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "exception",
+   "fieldtype": "Text",
+   "label": "Exception"
+  },
+  {
+   "fieldname": "log_index",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Log Index"
+  }
+ ],
+ "in_create": 1,
+ "links": [],
+ "modified": "2025-02-22 10:49:39.148568",
+ "modified_by": "Administrator",
+ "module": "Company Sync",
+ "name": "VTigerCRM Sync Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "read_only": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

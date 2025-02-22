@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{name1} Sync on {creation}",
+ "beta": 1,
+ "creation": "2024-11-07 14:42:40.143548",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "vtigercrm_data_section",
+  "name1",
+  "status",
+  "column_break_ntli",
+  "sync_on",
+  "section_sync_preview",
+  "sync_preview"
+ ],
+ "fields": [
+  {
+   "fieldname": "vtigercrm_data_section",
+   "fieldtype": "Section Break",
+   "label": "VTigerCRM Data"
+  },
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "reqd": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Pending\nSuccess\nPartial Success\nError\nTimed Out",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ntli",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sync_on",
+   "fieldtype": "Data",
+   "label": "Sync on",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_sync_preview",
+   "fieldtype": "Section Break",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "sync_preview",
+   "fieldtype": "HTML",
+   "label": "Sync Preview"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-22 10:47:14.038255",
+ "modified_by": "Administrator",
+ "module": "Company Sync",
+ "name": "VTigerCRM Sync",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
