@@ -85,6 +85,9 @@ app_license = "mit"
 # before_install = "company_sync.install.before_install"
 # after_install = "company_sync.install.after_install"
 
+before_install = "company_sync.installer.before_install"
+after_migrate = "company_sync.installer.before_install"
+
 # Uninstallation
 # ------------
 
