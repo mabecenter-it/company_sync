@@ -13,10 +13,12 @@ def get_engine():
     db_host = frappe.conf.db_host_vtiger
     db_port = frappe.conf.db_port_vtiger
     db_name = frappe.conf.db_name_vtiger
+    db_type = frappe.conf.db_type_vtiger
+    db_conn = frappe.conf.db_conn_vtiger
 
     # Construir la cadena de conexión MySQL
     if all([db_user, db_password, db_host, db_port, db_name]):
-        connection_string = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+        connection_string = f"{db_type}+{db_conn}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     else:
         frappe.logger().error("Faltan detalles de conexión para VTigerCRM.")
         connection_string = None

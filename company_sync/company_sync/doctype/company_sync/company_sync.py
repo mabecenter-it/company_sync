@@ -7,7 +7,7 @@ from frappe import _
 # Import sync implementation
 #from company_sync.company_sync.doctype.vtigercrm_sync.syncer.factory.factory import HandlerFactory
 #from company_sync.company_sync.doctype.vtigercrm_sync.syncer.record import RecordProcessor
-#from company_sync.company_sync.doctype.vtigercrm_sync.syncer.syncer import Syncer
+from company_sync.company_sync.doctype.company_sync.syncer.syncer import Syncer
 # Import job timeout exception
 from rq.timeouts import JobTimeoutException
 # Import document base class

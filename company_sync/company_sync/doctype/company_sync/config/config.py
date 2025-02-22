@@ -20,12 +20,3 @@ DB_USERNAME = os.getenv('DB_USERNAME')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 SQLALCHEMY_DATABASE_URI = f'{DB_TYPE}+{DB_CONNECTOR}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}'
-
-def setup_logging():
-    """
-    Configura el logger global con el nivel INFO.
-    """
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    # Puedes agregar más handlers y formatos según necesites
-    return logger

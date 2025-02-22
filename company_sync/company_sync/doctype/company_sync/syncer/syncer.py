@@ -1,13 +1,14 @@
 import frappe
 from sqlalchemy.orm import sessionmaker
 
-from mabecenter.mabecenter.doctype.vtigercrm_sync.database.engine import get_engine
-from mabecenter.mabecenter.doctype.vtigercrm_sync.config.config import SyncConfig
-from mabecenter.mabecenter.doctype.vtigercrm_sync.syncer.observer.frappe import FrappeProgressObserver
-from mabecenter.overrides.exception.sync_error import SyncError
+from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
+#from mabecenter.mabecenter.doctype.vtigercrm_sync.config.config import SyncConfig
+from company_sync.company_sync.doctype.company_sync.syncer.observer.frappe import FrappeProgressObserver
+#from mabecenter.overrides.exception.sync_error import SyncError
+from company_sync.company_sync.doctype.company_sync.config.logging import setup_logging
 
-from mabecenter.mabecenter.doctype.vtigercrm_sync.database.unit_of_work import UnitOfWork
-from mabecenter.mabecenter.doctype.vtigercrm_sync.syncer.record import RecordProcessor
+from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
+from company_sync.company_sync.doctype.company_sync.syncer.record import RecordProcessor
 
 # Main Syncer class that orchestrates the VTiger CRM synchronization
 class Syncer:
@@ -20,7 +21,7 @@ class Syncer:
         
         # Initialize syncer with document name and required components
         self.doc_name = doc_name
-        self.vtigercrm_sync = frappe.get_doc("VTigerCRM Sync", doc_name)
+        self.vtigercrm_sync = frappe.get_doc("Company Sync", doc_name)
         self.progress_observer = FrappeProgressObserver()
         self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
         self.config = SyncConfig()

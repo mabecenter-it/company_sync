@@ -9,9 +9,11 @@
  "field_order": [
   "company_data_section",
   "name1",
+  "company",
   "status",
   "column_break_ntli",
   "sync_on",
+  "broker",
   "section_sync_preview",
   "sync_preview"
  ],
@@ -57,11 +59,24 @@
    "fieldname": "sync_preview",
    "fieldtype": "HTML",
    "label": "Sync Preview"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Select",
+   "label": "Company",
+   "options": "Oscar\nAmbetter\nAetna\nMolina",
+   "reqd": 1
+  },
+  {
+   "fieldname": "broker",
+   "fieldtype": "Select",
+   "label": "Broker",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-22 10:47:14.038255",
+ "modified": "2025-02-22 12:18:23.341854",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
