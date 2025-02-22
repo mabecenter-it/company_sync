@@ -1,19 +1,21 @@
-# File: company_sync/strategies/aetna_strategy.py
-from company_sync.strategies.base_strategy import BaseStrategy
-from company_sync.utils import calculate_term_date, get_fields
+# File: company_sync/services/sales_order_service.py
+from company_sync.company_sync.doctype.company_sync.syncer.processors.csv_processor import CSVProcessor
+from company_sync.company_sync.doctype.company_sync.syncer.handlers.crm_handler import CRMHandler
+from company_sync.company_sync.doctype.company_sync.syncer.handlers.so_updater import SOUpdater
+from company_sync.company_sync.doctype.company_sync.syncer.utils import get_fields
 
-class AetnaStrategy(BaseStrategy):
-    def __init__(self):
-        self.fields = get_fields("aetna")
-    
-    def apply_logic(self, df):
-        if 'Effective Date' in df.columns:
-            df['Policy Term Date'] = df['Effective Date'].apply(lambda d: calculate_term_date(d, self.fields['format']))
+class SOService:
+    def __init__(self, csv_path: str, company: str, broker: str, strategy, vtiger_client, logger):
+        self.csv_processor = CSVProcessor(csv_path, strategy)
+        self.crm_handler = CRMHandler(company, broker)
+        data_config = get_fields(company)
+        self.so_updater = SOUpdater(vtiger_client, company, data_config, broker, logger=logger)
+        self.logger = logger
 
-        # Renombrar la columna "Member ID" a "memberID"
-        if 'Member ID' in df.columns:
-            df.rename(columns={"Member ID": "memberID"}, inplace=True)
-        return df
-    
-    def get_fields(self) -> dict:
-        return self.fields
+    def process(self):
+        df_csv = self.csv_processor.process()
+        if df_csv.empty:
+            return
+        df_crm = self.crm_handler.fetch_data()
+        self.crm_handler.merge_data(df_crm, df_csv)
+        self.so_updater.update_orders(df_csv)

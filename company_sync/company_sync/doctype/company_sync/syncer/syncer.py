@@ -1,9 +1,17 @@
+from company_sync.company_sync.doctype.company_sync.syncer.WSClient import VTigerWSClient
 import frappe
 from sqlalchemy.orm import sessionmaker
 
 from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
-#from mabecenter.mabecenter.doctype.vtigercrm_sync.config.config import SyncConfig
+from company_sync.company_sync.doctype.company_sync.config.config import SyncConfig
 from company_sync.company_sync.doctype.company_sync.syncer.observer.frappe import FrappeProgressObserver
+from company_sync.company_sync.doctype.company_sync.syncer.strategies.base_strategy import BaseStrategy
+from company_sync.company_sync.doctype.company_sync.syncer.strategies.aetna_strategy import AetnaStrategy
+from company_sync.company_sync.doctype.company_sync.syncer.strategies.oscar_strategy import OscarStrategy
+
+from company_sync.company_sync.doctype.company_sync.syncer.utils import get_fields
+from company_sync.company_sync.doctype.company_sync.syncer.services.so_service import SOService
+
 #from mabecenter.overrides.exception.sync_error import SyncError
 from company_sync.company_sync.doctype.company_sync.config.logging import setup_logging
 
@@ -33,11 +41,13 @@ class Syncer:
     def sync(self):        
         try:
             logger = setup_logging()
+            company = self.vtigercrm_sync.company
+            broker = self.vtigercrm_sync.broker
             
             # Selecciona la estrategia adecuada según la compañía
-            if args.company.lower() == 'aetna':
+            if company == 'Aetna':
                 strategy = AetnaStrategy()
-            elif args.company.lower() == 'oscar':
+            elif company == 'Oscar':
                 strategy = OscarStrategy()
             else:
                 # Estrategia por defecto (sin lógica especial)
@@ -45,14 +55,13 @@ class Syncer:
                     def apply_logic(self, df):
                         return df
                     def get_fields(self):
-                        from company_sync.utils import get_fields
-                        return get_fields(args.company)
+                        return get_fields(company)
                 strategy = DefaultStrategy()
             
-            vtiger_client = VTigerWSClient(config.VTIGER_HOST)
-            vtiger_client.doLogin(config.VTIGER_USERNAME, config.VTIGER_TOKEN)
+            vtiger_client = VTigerWSClient(frappe.conf.db_host_vtiger)
+            vtiger_client.doLogin(frappe.conf.vt_api_user, frappe.conf.vt_api_token)
             
-            service = SOService(args.csv, args.company, args.broker, strategy, vtiger_client, logger)
+            service = SOService(args.csv, company, broker, strategy, vtiger_client, logger)
             service.process()
                 
         except Exception as e:

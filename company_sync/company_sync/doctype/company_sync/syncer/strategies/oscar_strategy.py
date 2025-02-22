@@ -1,6 +1,6 @@
 # File: company_sync/strategies/oscar_strategy.py
-from company_sync.strategies.base_strategy import BaseStrategy
-from company_sync.utils import calculate_paid_through_date, get_fields
+from company_sync.company_sync.doctype.company_sync.syncer.strategies.base_strategy import BaseStrategy
+from company_sync.company_sync.doctype.company_sync.syncer.utils import calculate_paid_through_date, get_fields
 
 class OscarStrategy(BaseStrategy):
     def __init__(self):

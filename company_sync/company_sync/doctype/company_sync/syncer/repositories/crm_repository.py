@@ -1,15 +1,18 @@
 # File: company_sync/repositories/crm_repository.py
+from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
+from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
 import pandas as pd
 from sqlalchemy import text
-from company_sync.database import get_session
+from sqlalchemy.orm import sessionmaker
 
 class CRMRepository:
     def __init__(self, company: str, broker: str):
         self.company = company
         self.broker = broker
+        self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
 
     def fetch_sales_orders(self) -> pd.DataFrame:
-        with get_session() as session:
+        with self.unit_of_work as session:
             query = f"""
                 SELECT member_id, so_no
                 FROM vtigercrm_2022.calendar_2025_materialized

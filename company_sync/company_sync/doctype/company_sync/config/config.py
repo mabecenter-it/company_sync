@@ -1,22 +1,23 @@
-import os
-from dotenv import load_dotenv
-import logging
+import frappe
+from datetime import date
+import json
+from dataclasses import dataclass, field
+from typing import Dict, Any
 
-# Cargar variables de entorno desde el archivo .env
-load_dotenv()
+@dataclass
+class SyncConfig:
+    status_values: list = field(default_factory=lambda: ['Active', 'Initial Enrollment', 'Sin Digitar'])
+    effective_date: date = field(default_factory=lambda: date(2025, 1, 1))
+    sell_date: date = field(default_factory=lambda: date(2024, 10, 28))
+    
+    def __post_init__(self):
+        self.mapping_file = self._load_mapping('salesorder')
+        self.handle_file = self._load_mapping('handler')
 
-# Configuración de VTiger
-VTIGER_HOST = os.getenv('VTIGER_HOST')
-VTIGER_USERNAME = os.getenv('VTIGER_USERNAME')
-VTIGER_TOKEN = os.getenv('VTIGER_TOKEN')
-
-# Configuración de la base de datos
-DB_TYPE = os.getenv('DB_TYPE')
-DB_CONNECTOR = os.getenv('DB_CONNECTOR')
-DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
-DB_DATABASE = os.getenv('DB_DATABASE')
-DB_USERNAME = os.getenv('DB_USERNAME')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-
-SQLALCHEMY_DATABASE_URI = f'{DB_TYPE}+{DB_CONNECTOR}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}'
+    def _load_mapping(self, filename: str) -> Dict[str, Any]:
+        filename = frappe.get_app_path(
+            'mabecenter', 'mabecenter', 'doctype', 
+            'company_sync', 'config', 'mapping', f'{filename}.json'
+        )
+        with open(filename, 'r', encoding='utf-8') as file:
+            return json.load(file) 

@@ -1,10 +1,12 @@
 # File: company_sync/handlers/so_updater.py
 import datetime
 import logging
+from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
+from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
 from sqlalchemy import text
 from tqdm import tqdm
-from company_sync.database import get_session
-from company_sync.utils import last_day_of_month
+from sqlalchemy.orm import sessionmaker
+from company_sync.company_sync.doctype.company_sync.syncer.utils import last_day_of_month
 
 class SOUpdater:
     def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, logger=None):
@@ -13,6 +15,7 @@ class SOUpdater:
         self.data_config = data_config
         self.broker = broker
         self.logger = logger if logger is not None else logging.getLogger(__name__)
+        self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
     
     def update_sales_order(self, memberID: str, paidThroughDate: str, salesOrderData: dict):
         try:
@@ -46,7 +49,7 @@ class SOUpdater:
 
         if (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
             try:
-                with get_session() as session:
+                with self.unit_of_work as session:
                     query = f"""
                         SELECT *
                         FROM vtigercrm_2022.calendar_2025_materialized

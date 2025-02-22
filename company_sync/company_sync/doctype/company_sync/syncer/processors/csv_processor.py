@@ -1,7 +1,7 @@
 # File: company_sync/processors/csv_processor.py
 import pandas as pd
 import logging
-from company_sync.utils import conditional_update
+from company_sync.company_sync.doctype.company_sync.syncer.utils import conditional_update
 
 class CSVProcessor:
     def __init__(self, csv_path: str, strategy):

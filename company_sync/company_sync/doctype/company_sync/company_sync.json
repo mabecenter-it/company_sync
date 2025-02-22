@@ -10,6 +10,7 @@
   "company_data_section",
   "name1",
   "company",
+  "company_file",
   "status",
   "column_break_ntli",
   "sync_on",
@@ -72,11 +73,16 @@
    "fieldtype": "Select",
    "label": "Broker",
    "reqd": 1
+  },
+  {
+   "fieldname": "company_file",
+   "fieldtype": "Attach",
+   "label": "Company File"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-22 12:18:23.341854",
+ "modified": "2025-02-22 12:51:09.904163",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
