@@ -7,7 +7,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "vtigercrm_data_section",
+  "company_data_section",
   "name1",
   "status",
   "column_break_ntli",
@@ -17,9 +17,9 @@
  ],
  "fields": [
   {
-   "fieldname": "vtigercrm_data_section",
+   "fieldname": "company_data_section",
    "fieldtype": "Section Break",
-   "label": "VTigerCRM Data"
+   "label": "Company Data"
   },
   {
    "fieldname": "name1",
@@ -64,7 +64,7 @@
  "modified": "2025-02-22 10:47:14.038255",
  "modified_by": "Administrator",
  "module": "Company Sync",
- "name": "VTigerCRM Sync",
+ "name": "Company Sync",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

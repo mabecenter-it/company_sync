@@ -5,7 +5,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "vtigercrm_sync",
+  "company_sync",
   "row_indexes",
   "success",
   "docname",
@@ -15,11 +15,11 @@
  ],
  "fields": [
   {
-   "fieldname": "vtigercrm_sync",
+   "fieldname": "company_sync",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "VTigerCRM Sync",
-   "options": "VTigerCRM Sync"
+   "label": "Company Sync",
+   "options": "Company Sync"
   },
   {
    "fieldname": "row_indexes",
@@ -62,7 +62,7 @@
  "modified": "2025-02-22 10:49:39.148568",
  "modified_by": "Administrator",
  "module": "Company Sync",
- "name": "VTigerCRM Sync Log",
+ "name": "Company Sync Log",
  "owner": "Administrator",
  "permissions": [
   {

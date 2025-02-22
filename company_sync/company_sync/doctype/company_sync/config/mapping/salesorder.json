@@ -1,0 +1,54 @@
+{
+    "payment": {
+        "autopay": "cf_1463",
+        "paid": "cf_2147",
+        "zipcode": "cf_2143",
+        "address1": "cf_2799",
+        "address2": "cf_2731"
+    },
+    "Bank Account": {
+        "account_name": "cf_1479",
+        "Ruta": "cf_1475",
+        "Bank": "cf_1471"
+    },
+    "Bank card": {
+        "card_number": "cf_1465",
+        "expiration": "cf_1473",
+        "cvc": "cf_1473",
+        "card_subtype": "cf_2157"
+    },
+    "Sales Order": {
+        "custom_ffm_app_id": "cf_2115",
+        "custom_subscriber_id": "cf_2803",
+        "custom_plan_hios_id": "cf_2035",
+        "custom_plan_name": "cf_2037",
+        "custom_sales_person": "cf_2183",
+        "custom_sales_date": "cf_2179",
+        "custom_digitizer": "cf_2257",
+        "custom_digitizer_date": "cf_2255",
+        "transaction_date": "cf_2059"
+    },
+    "Address":{
+        "address_line1": "cf_2737",
+        "city": "cf_2739",
+        "state": "cf_2765",
+        "pincode": "cf_2743"
+    },
+    "Contact": {
+        "owner": {
+            "first_name": "cf_2293",
+            "last_name": "cf_2297",
+            "custom_day_of_birth": "cf_2299"
+        },
+        "spouse": {
+            "first_name": "cf_2347",
+            "last_name": "cf_2351",
+            "custom_day_of_birth": "cf_2355"
+        },
+        "dependent_1": {
+            "first_name": "cf_2405",
+            "last_name": "cf_2409",
+            "custom_day_of_birth": "cf_2413"
+        }
+    }
+}

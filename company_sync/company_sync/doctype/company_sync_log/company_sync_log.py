@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class VTigerCRMSyncLog(Document):
+class CompanySyncLog(Document):
 	pass
