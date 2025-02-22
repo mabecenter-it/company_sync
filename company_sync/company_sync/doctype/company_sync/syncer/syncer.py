@@ -43,6 +43,7 @@ class Syncer:
             logger = setup_logging()
             company = self.vtigercrm_sync.company
             broker = self.vtigercrm_sync.broker
+            csv = self.vtigercrm_sync.company_file
             
             # Selecciona la estrategia adecuada según la compañía
             if company == 'Aetna':
@@ -61,7 +62,7 @@ class Syncer:
             vtiger_client = VTigerWSClient(frappe.conf.db_host_vtiger)
             vtiger_client.doLogin(frappe.conf.vt_api_user, frappe.conf.vt_api_token)
             
-            service = SOService(args.csv, company, broker, strategy, vtiger_client, logger)
+            service = SOService(csv, company, broker, strategy, vtiger_client, logger)
             service.process()
                 
         except Exception as e:

@@ -72,6 +72,7 @@
    "fieldname": "broker",
    "fieldtype": "Select",
    "label": "Broker",
+   "options": "BS\nADC",
    "reqd": 1
   },
   {
@@ -82,7 +83,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-22 12:51:09.904163",
+ "modified": "2025-02-22 12:53:31.504910",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
