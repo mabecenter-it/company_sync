@@ -15,8 +15,8 @@ def save_config_vtigercrm():
         "db_host_vtiger": os.getenv('VTIGER_HOST'),
         "db_port_vtiger": os.getenv('VTIGER_PORT'),
         "db_name_vtiger": os.getenv('VTIGER_DB_NAME'),
-        "db_type_vtiger": os.getenv('VTIGER_DB_NAME'),
-        "db_conn_vtiger": os.getenv('VTIGER_DB_NAME'),
+        "db_type_vtiger": os.getenv('VTIGER_DB_TYPE'),
+        "db_conn_vtiger": os.getenv('VTIGER_DB_CONN'),
     }
 
     # Update site config with VTiger settings
