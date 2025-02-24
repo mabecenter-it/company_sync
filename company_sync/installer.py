@@ -17,6 +17,7 @@ def save_config_vtigercrm():
         "db_name_vtiger": os.getenv('VTIGER_DB_NAME'),
         "db_type_vtiger": os.getenv('VTIGER_DB_TYPE'),
         "db_conn_vtiger": os.getenv('VTIGER_DB_CONN'),
+        "vt_api_root_endpoint": os.getenv('VTIGER_API_ROOT_ENDPOINT'),
         "vt_api_user": os.getenv('VTIGER_API_USER'),
         "vt_api_token": os.getenv('VTIGER_API_TOKEN'),
     }

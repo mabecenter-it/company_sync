@@ -1,5 +1,6 @@
 from company_sync.company_sync.doctype.company_sync.syncer.WSClient import VTigerWSClient
 import frappe
+from company_sync.company_sync.overrides.exception.sync_error import SyncError
 from sqlalchemy.orm import sessionmaker
 
 from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
@@ -59,7 +60,7 @@ class Syncer:
                         return get_fields(company)
                 strategy = DefaultStrategy()
             
-            vtiger_client = VTigerWSClient(frappe.conf.db_host_vtiger)
+            vtiger_client = VTigerWSClient(frappe.conf.vt_api_root_endpoint)
             vtiger_client.doLogin(frappe.conf.vt_api_user, frappe.conf.vt_api_token)
             
             service = SOService(csv, company, broker, strategy, vtiger_client, logger)
