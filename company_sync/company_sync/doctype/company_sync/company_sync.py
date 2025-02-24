@@ -52,7 +52,7 @@ class CompanySync(Document):
 		#doc = frappe.get_doc("Company Sync", self.name)
 		#doc.check_permission("read")
 
-		print("get_sync_logs")
+		print("company_sync.company_sync.doctype.company_sync.get_sync_logs")
 
 		return frappe.get_all(
 			"Company Sync Log",

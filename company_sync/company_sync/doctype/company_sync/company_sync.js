@@ -68,7 +68,7 @@ frappe.ui.form.on("Company Sync", {
 		console.log(frm.doc.name)
 		frm.call({
 			doc: frm.doc,
-			method: "get_sync_logs",
+			method: "company_sync.company_sync.doctype.company_sync.company_sync.get_sync_logs",
 			args: { company_sync: frm.doc.name },
 		}).then((r) => {
 			if (r.message === true) {
