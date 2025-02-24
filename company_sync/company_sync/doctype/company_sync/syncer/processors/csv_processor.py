@@ -2,6 +2,7 @@
 import pandas as pd
 import logging
 from company_sync.company_sync.doctype.company_sync.syncer.utils import conditional_update
+import frappe
 
 class CSVProcessor:
     def __init__(self, csv_path: str, strategy):
@@ -10,7 +11,8 @@ class CSVProcessor:
         self.logger = logging.getLogger(__name__)
     
     def read_csv(self) -> pd.DataFrame:
-        df = pd.read_csv(self.csv_path)
+        csv_site_path = frappe.get_site_path(self.csv_path.lstrip('/'))
+        df = pd.read_csv(csv_site_path)
         if df.empty:
             self.logger.info("CSV is empty")
         return df

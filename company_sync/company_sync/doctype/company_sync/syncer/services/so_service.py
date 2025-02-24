@@ -5,11 +5,12 @@ from company_sync.company_sync.doctype.company_sync.syncer.handlers.so_updater i
 from company_sync.company_sync.doctype.company_sync.syncer.utils import get_fields
 
 class SOService:
-    def __init__(self, csv_path: str, company: str, broker: str, strategy, vtiger_client, logger):
+    def __init__(self, csv_path: str, company: str, broker: str, strategy, vtiger_client, doc_name, logger):
         self.csv_processor = CSVProcessor(csv_path, strategy)
         self.crm_handler = CRMHandler(company, broker)
         data_config = get_fields(company)
-        self.so_updater = SOUpdater(vtiger_client, company, data_config, broker, logger=logger)
+        self.doc_name = doc_name
+        self.so_updater = SOUpdater(vtiger_client, company, data_config, broker, doc_name, logger=logger)
         self.logger = logger
 
     def process(self):

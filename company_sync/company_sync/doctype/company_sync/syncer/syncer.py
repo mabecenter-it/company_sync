@@ -63,7 +63,7 @@ class Syncer:
             vtiger_client = VTigerWSClient(frappe.conf.vt_api_root_endpoint)
             vtiger_client.doLogin(frappe.conf.vt_api_user, frappe.conf.vt_api_token)
             
-            service = SOService(csv, company, broker, strategy, vtiger_client, logger)
+            service = SOService(csv, company, broker, strategy, vtiger_client, self.doc_name, logger)
             service.process()
                 
         except Exception as e:

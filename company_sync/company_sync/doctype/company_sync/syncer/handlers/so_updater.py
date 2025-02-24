@@ -7,15 +7,18 @@ from sqlalchemy import text
 from tqdm import tqdm
 from sqlalchemy.orm import sessionmaker
 from company_sync.company_sync.doctype.company_sync.syncer.utils import last_day_of_month
+from company_sync.company_sync.doctype.company_sync.syncer.observer.frappe import FrappeProgressObserver
 
 class SOUpdater:
-    def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, logger=None):
+    def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, doc_name: str, logger=None):
         self.vtiger_client = vtiger_client
         self.company = company
         self.data_config = data_config
+        self.doc_name = doc_name
         self.broker = broker
         self.logger = logger if logger is not None else logging.getLogger(__name__)
         self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
+        self.progress_observer = FrappeProgressObserver()
     
     def update_sales_order(self, memberID: str, paidThroughDate: str, salesOrderData: dict):
         try:
@@ -93,5 +96,10 @@ class SOUpdater:
                                   extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
 
     def update_orders(self, df):
-        for _, row in tqdm(df.iterrows(), total=len(df), desc="Actualizando Órdenes de Venta..."):
+        total = len(df)
+        for idx, row in df.iterrows():
             self.process_order(row)
+            # Calcula el progreso en porcentaje
+            progress = float((idx + 1) / total)
+            # Guarda el progreso en caché
+            self.progress_observer.update(progress, {'doc_name': self.doc_name})
