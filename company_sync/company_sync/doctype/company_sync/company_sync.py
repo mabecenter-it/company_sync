@@ -46,11 +46,30 @@ class CompanySync(Document):
 			return True
 
 		return False
+	
+	def get_sync_logs(self):
+		# Get sync logs
+		#doc = frappe.get_doc("Company Sync", self.name)
+		#doc.check_permission("read")
+
+		print("get_sync_logs")
+
+		return frappe.get_all(
+			"Company Sync Log",
+			fields=["success", "docname", "messages", "exception", "row_indexes"],
+			filters={"company_sync": self.name},
+			limit_page_length=5000,
+			order_by="log_index",
+		)
 
 @frappe.whitelist(allow_guest=True)
 def form_start_sync(company_sync: str):
 	# Start sync from form
-	return frappe.get_doc("Company Sync", company_sync).start_sync()
+	return frappe.get_doc("Company Sync", company_sync).start_sync()	
+
+@frappe.whitelist(allow_guest=True)
+def get_sync_logs(company_sync: str):
+	return frappe.get_doc("Company Sync", company_sync).get_sync_logs()
 
 
 def start_sync(company_sync):

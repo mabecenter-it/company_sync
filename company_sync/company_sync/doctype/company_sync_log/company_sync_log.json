@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2024-12-06 15:17:31.530507",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -59,7 +58,7 @@
  ],
  "in_create": 1,
  "links": [],
- "modified": "2025-02-22 10:49:39.148568",
+ "modified": "2025-02-24 16:34:16.488110",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",

@@ -16,7 +16,9 @@
   "sync_on",
   "broker",
   "section_sync_preview",
-  "sync_preview"
+  "sync_preview",
+  "section_sync_log_preview",
+  "sync_log_preview"
  ],
  "fields": [
   {
@@ -79,11 +81,21 @@
    "fieldname": "company_file",
    "fieldtype": "Attach",
    "label": "Company File"
+  },
+  {
+   "fieldname": "section_sync_log_preview",
+   "fieldtype": "Section Break",
+   "label": "Sync Log"
+  },
+  {
+   "fieldname": "sync_log_preview",
+   "fieldtype": "HTML",
+   "label": "Sync Log Preview"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-22 12:53:31.504910",
+ "modified": "2025-02-24 12:47:20.847763",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
