@@ -78,7 +78,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 	start_sync(frm) {
 		frm.call({
 			method: "form_start_sync",
-			args: { company_sync: frm.doc.name },
+			args: { company_sync_scheduler: frm.doc.name },
 			btn: frm.page.btn_primary,
 		}).then((r) => {
 			if (r.message === true) {
@@ -94,8 +94,8 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			return;
 		}
 		frappe.call({
-			method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync.get_sync_logs",
-			args: { company_sync: frm.doc.name },
+			method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.get_sync_logs",
+			args: { company_sync_scheduler: frm.doc.name },
 			callback: function (r) {
 				console.log(r)
 				console.log(r.message.length)
@@ -111,23 +111,67 @@ frappe.ui.form.on("Company Sync Scheduler", {
 				let logs = r.message;
 				console.log(r)
 
+				const memberIdMap = {};
+
 				// Mapear cada log para crear una fila de la tabla
-				let rows = logs.map((log) => {
-				return `<tr>
-					<td>${log.memberid}</td>
-					<td>${log.messages}</td>
-				</tr>`;
+				let rows = logs.map((log, index) => {
+					const selectId = `review-select-${index}`;
+					// Guardamos la correspondencia en el objeto
+					memberIdMap[selectId] = log.memberid;
+					return `<tr>
+						<td>${log.memberid}</td>
+						<td>${log.messages}</td>
+						<td>
+						<div class="control-input-wrapper">
+							<div class="control-input flex align-center">
+								<select id="${selectId}" type="text" autocomplete="off" class="input-with-feedback form-control ellipsis review-select">
+									<option></option>
+									<option value="Create Issue" ${log.review === 'Create Issue' ? 'selected' : ''} >Create Issue</option>
+									<option value="Portal Error" ${log.review === 'Portal Error' ? 'selected' : ''} >Portal Error</option>
+									<option value="Sync Error" ${log.review === 'Sync Error' ? 'selected' : ''} >Sync Error</option>
+								</select>
+								<div class="select-icon ">
+									<svg class="icon  icon-sm" style="" aria-hidden="true">
+										<use class="" href="#icon-select"></use>
+									</svg>
+								</div>
+							</div>
+							<div class="control-value like-disabled-input" style="display: none;">MySQL</div>
+							<p class="help-box small text-muted"></p>
+						</div>
+						</td>
+					</tr>`;
 				}).join('');
 
 				$(`
 					<table class="table table-bordered">
 						<tr class="text-muted">
 						<th width="20%">${__("Member ID")}</th>
-						<th width="80%">${__("Message")}</th>
+						<th width="65%">${__("Message")}</th>
+						<th width="15%">${__("Review")}</th>
 						</tr>
 						${rows}
 					</table>
 				`).appendTo($wrapper);
+
+				console.log(memberIdMap)
+
+				$wrapper.on('change', '.review-select', function() {
+					let newValue = $(this).val();
+					// Obtener el id único asignado
+					let selectID = $(this).attr('id');
+					// Buscar el member id en el objeto de correspondencia
+					let memberID = memberIdMap[selectID];
+
+
+					frappe.call({
+						method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.update_log_review",
+						args: { company_sync_scheduler: frm.doc.name, memberid: memberID, review: newValue },
+						callback: function (r) {
+							console.log("Update")
+						}
+					});
+				});
 			},
 		});
 	},

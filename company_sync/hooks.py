@@ -88,9 +88,7 @@ app_license = "mit"
 before_install = "company_sync.installer.before_install"
 after_migrate = "company_sync.installer.before_install"
 
-workspaces = [
-    {"name": "company_sync", "workspace": "company_sync"}
-]
+setup_wizard_requires = "assets/company_sync/js/setup_wizard.js"
 
 # Uninstallation
 # ------------

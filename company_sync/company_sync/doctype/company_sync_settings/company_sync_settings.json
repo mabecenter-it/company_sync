@@ -1,0 +1,129 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-02-25 13:00:48.023712",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "database_tab",
+  "database_section",
+  "host",
+  "user",
+  "type",
+  "name_db",
+  "column_break_ojwx",
+  "port",
+  "password",
+  "connector",
+  "api_tab",
+  "api_section",
+  "user_api",
+  "endpoint",
+  "column_break_yucc",
+  "token"
+ ],
+ "fields": [
+  {
+   "fieldname": "database_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "host",
+   "fieldtype": "Data",
+   "label": "Host"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User DB"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "\nMariaDB\nMySQL"
+  },
+  {
+   "fieldname": "column_break_ojwx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "port",
+   "fieldtype": "Int",
+   "label": "Port"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "Password"
+  },
+  {
+   "fieldname": "connector",
+   "fieldtype": "Select",
+   "label": "Connector",
+   "options": "\npymysql"
+  },
+  {
+   "fieldname": "api_section",
+   "fieldtype": "Section Break",
+   "label": "API"
+  },
+  {
+   "fieldname": "user_api",
+   "fieldtype": "Data",
+   "label": "User API"
+  },
+  {
+   "fieldname": "endpoint",
+   "fieldtype": "Data",
+   "label": "Endpoint"
+  },
+  {
+   "fieldname": "column_break_yucc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "Password",
+   "label": "Token"
+  },
+  {
+   "fieldname": "database_tab",
+   "fieldtype": "Tab Break",
+   "label": "Database"
+  },
+  {
+   "fieldname": "api_tab",
+   "fieldtype": "Tab Break",
+   "label": "API"
+  },
+  {
+   "fieldname": "name_db",
+   "fieldtype": "Data",
+   "label": "Name DB"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-02-25 13:33:51.281120",
+ "modified_by": "Administrator",
+ "module": "Company Sync",
+ "name": "Company Sync Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

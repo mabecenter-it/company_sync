@@ -8,13 +8,14 @@ def get_engine():
     Crea y devuelve un motor de SQLAlchemy basado en la configuración de Frappe.
     """
     # Obtener detalles de conexión a la base de datos desde la configuración de Frappe
-    db_user = frappe.conf.db_user_vtiger
-    db_password = frappe.conf.db_password_vtiger
-    db_host = frappe.conf.db_host_vtiger
-    db_port = frappe.conf.db_port_vtiger
-    db_name = frappe.conf.db_name_vtiger
-    db_type = frappe.conf.db_type_vtiger
-    db_conn = frappe.conf.db_conn_vtiger
+    conf = frappe.get_doc("Company Sync Settings")
+    db_user = conf.user
+    db_password = conf.get_password("password")
+    db_host = conf.host
+    db_port = conf.port
+    db_name = conf.name_db
+    db_type = str(conf.type).lower()
+    db_conn = str(conf.connector).lower()
 
     # Construir la cadena de conexión MySQL
     if all([db_user, db_password, db_host, db_port, db_name]):

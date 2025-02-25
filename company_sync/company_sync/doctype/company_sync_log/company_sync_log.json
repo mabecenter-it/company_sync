@@ -9,6 +9,7 @@
   "success",
   "docname",
   "memberid",
+  "review",
   "messages",
   "exception",
   "log_index"
@@ -60,11 +61,17 @@
    "fieldname": "memberid",
    "fieldtype": "Data",
    "label": "Member ID"
+  },
+  {
+   "fieldname": "review",
+   "fieldtype": "Select",
+   "label": "Review",
+   "options": "\nCreate Issue\nPortal Error\nSync Error"
   }
  ],
  "in_create": 1,
  "links": [],
- "modified": "2025-02-25 12:38:25.894798",
+ "modified": "2025-02-25 17:00:14.395221",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",

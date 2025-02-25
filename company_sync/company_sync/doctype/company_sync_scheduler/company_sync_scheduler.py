@@ -9,6 +9,7 @@ from frappe import _
 #from company_sync_scheduler.company_sync_scheduler.doctype.vtigercrm_sync.syncer.record import RecordProcessor
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.syncer import Syncer
 # Import job timeout exception
+import frappe.realtime
 from rq.timeouts import JobTimeoutException
 # Import document base class
 from frappe.model.document import Document
@@ -52,15 +53,23 @@ class CompanySyncScheduler(Document):
 		#doc = frappe.get_doc("Company Sync", self.name)
 		#doc.check_permission("read")
 
-		print("company_sync_scheduler.company_sync_scheduler.doctype.company_sync_scheduler.get_sync_logs")
-
 		return frappe.get_all(
 			"Company Sync Log",
 			fields=["*"],
-			filters={"company_sync_scheduler": self.name},
+			filters={"company_sync": self.name},
 			limit_page_length=5000,
 			order_by="log_index",
 		)
+
+@frappe.whitelist(allow_guest=True)
+def update_log_review(company_sync_scheduler: str, memberid: str, review: str):
+	#return frappe.get_doc("Company Sync Scheduler", company_sync_scheduler, filter["memberid"]).update_review(review)
+	doc_log =  frappe.get_last_doc(
+		"Company Sync Log",
+		filters={ "company_sync": company_sync_scheduler, "memberid": memberid }
+	)
+	doc_log.review = review
+	doc_log.save()
 
 @frappe.whitelist(allow_guest=True)
 def form_start_sync(company_sync_scheduler: str):
@@ -82,7 +91,7 @@ def start_sync(company_sync_scheduler):
 		frappe.db.rollback()
 		doc = frappe.get_doc("Company Sync Scheduler", company_sync_scheduler)
 		doc.db_set("status", "Timed Out")
-	except Exception:
+	except Exception as e:
 		# Handle general errors
 		frappe.db.rollback()
 		doc = frappe.get_doc("Company Sync Scheduler", company_sync_scheduler)
@@ -91,3 +100,7 @@ def start_sync(company_sync_scheduler):
 	finally:
 		# Reset import flag
 		frappe.flags.in_import = False
+		#frappe.realtime()
+		#frappe.db.commit
+		doc = frappe.get_doc("Company Sync Scheduler", company_sync_scheduler)
+		doc.db_set("status", "Success")

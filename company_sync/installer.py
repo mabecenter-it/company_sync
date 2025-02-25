@@ -1,12 +1,13 @@
 def before_install():
-    save_config_vtigercrm()
+    #save_config_vtigercrm()
+    pass
 
 def save_config_vtigercrm():
     print("save_config_vtigercrm")
     """Save VTiger CRM configuration from environment variables to site config"""
     import os
     import frappe
-    from frappe.installer import update_site_config
+    #from frappe.installer import update_site_config
     frappe.logger("save_config_vtigercrm")
     # Environment variables
     vtiger_config = {
@@ -22,7 +23,19 @@ def save_config_vtigercrm():
         "vt_api_token": os.getenv('VTIGER_API_TOKEN'),
     }
 
+    conf = frappe.get_doc("Company Sync Settings")
+    db_user = conf.user
+    db_password = conf.password
+    db_host = conf.host
+    db_port = conf.port
+    db_name = conf.name_db
+    db_type = str(conf.type).islower()
+    db_conn = str(conf.connector).islower()
+
+    conf.mi_campo = "Nuevo valor"  # Asigna el nuevo valor a un campo
+    conf.save()  # Guarda el documento
+
     # Update site config with VTiger settings
-    for key, value in vtiger_config.items():
-        if value:  # Only update if environment variable exists
-            update_site_config(key, value) 
+    #for key, value in vtiger_config.items():
+    #    if value:  # Only update if environment variable exists
+    #        update_site_config(key, value) 

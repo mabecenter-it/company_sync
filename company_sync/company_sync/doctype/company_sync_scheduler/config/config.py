@@ -17,7 +17,7 @@ class SyncConfig:
     def _load_mapping(self, filename: str) -> Dict[str, Any]:
         filename = frappe.get_app_path(
             'company_sync', 'company_sync', 'doctype', 
-            'company_sync', 'config', 'mapping', f'{filename}.json'
+            'company_sync_scheduler', 'config', 'mapping', f'{filename}.json'
         )
         with open(filename, 'r', encoding='utf-8') as file:
             return json.load(file) 

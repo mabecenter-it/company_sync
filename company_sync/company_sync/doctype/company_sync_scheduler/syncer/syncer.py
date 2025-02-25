@@ -4,6 +4,7 @@ from company_sync.company_sync.overrides.exception.sync_error import SyncError
 from sqlalchemy.orm import sessionmaker
 
 from company_sync.company_sync.doctype.company_sync_scheduler.database.engine import get_engine
+from company_sync.company_sync.doctype.company_sync_scheduler.database.client import get_client
 from company_sync.company_sync.doctype.company_sync_scheduler.config.config import SyncConfig
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.frappe import FrappeProgressObserver
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.base_strategy import BaseStrategy
@@ -13,7 +14,7 @@ from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import get_fields
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.services.so_service import SOService
 
-#from mabecenter.overrides.exception.sync_error import SyncError
+#from company_sync.overrides.exception.sync_error import SyncError
 from company_sync.company_sync.doctype.company_sync_scheduler.config.logging import setup_logging
 
 from company_sync.company_sync.doctype.company_sync_scheduler.database.unit_of_work import UnitOfWork
@@ -54,8 +55,7 @@ class Syncer:
                         return get_fields(company)
                 strategy = DefaultStrategy()
             
-            vtiger_client = VTigerWSClient(frappe.conf.vt_api_root_endpoint)
-            vtiger_client.doLogin(frappe.conf.vt_api_user, frappe.conf.vt_api_token)
+            vtiger_client = get_client()
             
             service = SOService(csv, company, broker, strategy, vtiger_client, self.doc_name, logger)
             service.process()
