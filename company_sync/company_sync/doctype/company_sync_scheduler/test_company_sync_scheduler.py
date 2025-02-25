@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestVCompanySync(FrappeTestCase):
+class TestVCompanySyncScheduler(FrappeTestCase):
 	pass

@@ -1,7 +1,7 @@
 // Copyright (c) 2024, Dante Devenir and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Company Sync", {
+frappe.ui.form.on("Company Sync Scheduler", {
 	setup(frm) {
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
 			// Validar que el sync corresponda al documento actual
@@ -94,7 +94,7 @@ frappe.ui.form.on("Company Sync", {
 			return;
 		}
 		frappe.call({
-			method: "company_sync.company_sync.doctype.company_sync.company_sync.get_sync_logs",
+			method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync.get_sync_logs",
 			args: { company_sync: frm.doc.name },
 			callback: function (r) {
 				console.log(r)
@@ -141,7 +141,7 @@ frappe.ui.form.on("Company Sync", {
 		frappe.call({
 			method: "frappe.client.get_count",
 			args: {
-				doctype: "Company Sync Log",
+				doctype: "Company Sync Scheduler Log",
 				filters: {
 					data_import: frm.doc.name,
 				},
@@ -179,6 +179,6 @@ function updateProgressBar(frm, percentage) {
 }
 
 function reloadDocument(frm) {
-	frappe.model.with_doc("Company Sync", frm.doc.name)
+	frappe.model.with_doc("Company Sync Scheduler", frm.doc.name)
 		.then(() => frm.reload_doc());
 }

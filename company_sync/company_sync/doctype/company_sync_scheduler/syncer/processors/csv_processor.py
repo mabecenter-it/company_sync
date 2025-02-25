@@ -1,7 +1,7 @@
 # File: company_sync/processors/csv_processor.py
 import pandas as pd
 import logging
-from company_sync.company_sync.doctype.company_sync.syncer.utils import conditional_update
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import conditional_update
 import frappe
 
 class CSVProcessor:

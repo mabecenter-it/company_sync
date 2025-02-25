@@ -1,6 +1,6 @@
 let imports_in_progress = [];
 
-frappe.listview_settings["Company Sync"] = {
+frappe.listview_settings["Company Sync Scheduler"] = {
 	onload(listview) {
 		frappe.realtime.on("company_sync_progress", (data) => {
 			if (!imports_in_progress.includes(data.company_sync)) {

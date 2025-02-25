@@ -2,7 +2,7 @@
 import pandas as pd
 import logging
 from tqdm import tqdm
-from company_sync.company_sync.doctype.company_sync.syncer.repositories.crm_repository import CRMRepository
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.repositories.crm_repository import CRMRepository
 
 class CRMHandler:
     def __init__(self, company: str, broker: str):

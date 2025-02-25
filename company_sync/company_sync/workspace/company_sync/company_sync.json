@@ -17,7 +17,7 @@
    "is_query_report": 0,
    "label": "Syncer",
    "link_count": 0,
-   "link_to": "Company Sync",
+   "link_to": "Company Sync Scheduler",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -46,7 +46,7 @@
    "is_query_report": 0,
    "label": "Company Sync",
    "link_count": 0,
-   "link_to": "Company Sync",
+   "link_to": "Company Sync Scheduler",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -62,7 +62,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-02-25 12:28:17.346721",
+ "modified": "2025-02-25 12:53:52.321780",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
@@ -71,6 +71,7 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
+ "restrict_to_domain": "company_sync",
  "roles": [],
  "sequence_id": 30.0,
  "shortcuts": [],

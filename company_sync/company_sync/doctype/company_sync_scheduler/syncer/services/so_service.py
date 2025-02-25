@@ -1,8 +1,8 @@
 # File: company_sync/services/sales_order_service.py
-from company_sync.company_sync.doctype.company_sync.syncer.processors.csv_processor import CSVProcessor
-from company_sync.company_sync.doctype.company_sync.syncer.handlers.crm_handler import CRMHandler
-from company_sync.company_sync.doctype.company_sync.syncer.handlers.so_updater import SOUpdater
-from company_sync.company_sync.doctype.company_sync.syncer.utils import get_fields
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.processors.csv_processor import CSVProcessor
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.handlers.crm_handler import CRMHandler
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.handlers.so_updater import SOUpdater
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import get_fields
 
 class SOService:
     def __init__(self, csv_path: str, company: str, broker: str, strategy, vtiger_client, doc_name, logger):

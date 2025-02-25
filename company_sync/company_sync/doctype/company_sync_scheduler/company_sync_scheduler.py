@@ -5,9 +5,9 @@
 import frappe
 from frappe import _
 # Import sync implementation
-#from company_sync.company_sync.doctype.vtigercrm_sync.syncer.factory.factory import HandlerFactory
-#from company_sync.company_sync.doctype.vtigercrm_sync.syncer.record import RecordProcessor
-from company_sync.company_sync.doctype.company_sync.syncer.syncer import Syncer
+#from company_sync_scheduler.company_sync_scheduler.doctype.vtigercrm_sync.syncer.factory.factory import HandlerFactory
+#from company_sync_scheduler.company_sync_scheduler.doctype.vtigercrm_sync.syncer.record import RecordProcessor
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.syncer import Syncer
 # Import job timeout exception
 from rq.timeouts import JobTimeoutException
 # Import document base class
@@ -15,7 +15,7 @@ from frappe.model.document import Document
 # Import background job utilities
 from frappe.utils.background_jobs import enqueue, is_job_enqueued
 
-class CompanySync(Document):
+class CompanySyncScheduler(Document):
 	def before_save(self):
 		# Set sync timestamp before saving
 		self.sync_on = self.creation
@@ -30,7 +30,7 @@ class CompanySync(Document):
 			frappe.throw(_("Scheduler is inactive. Cannot import data."), title=_("Scheduler Inactive"))
 
 		# Create unique job ID
-		job_id = f"company_sync::{self.name}"
+		job_id = f"company_sync_scheduler::{self.name}"
 
 		# Enqueue sync job if not already running
 		if not is_job_enqueued(job_id):
@@ -38,9 +38,9 @@ class CompanySync(Document):
 				start_sync,
 				queue="default",
 				timeout=10000,
-				event="company_sync",
+				event="company_sync_scheduler",
 				job_id=job_id,
-				company_sync=self.name,
+				company_sync_scheduler=self.name,
 				now=run_now,
 			)
 			return True
@@ -52,40 +52,40 @@ class CompanySync(Document):
 		#doc = frappe.get_doc("Company Sync", self.name)
 		#doc.check_permission("read")
 
-		print("company_sync.company_sync.doctype.company_sync.get_sync_logs")
+		print("company_sync_scheduler.company_sync_scheduler.doctype.company_sync_scheduler.get_sync_logs")
 
 		return frappe.get_all(
 			"Company Sync Log",
 			fields=["*"],
-			filters={"company_sync": self.name},
+			filters={"company_sync_scheduler": self.name},
 			limit_page_length=5000,
 			order_by="log_index",
 		)
 
 @frappe.whitelist(allow_guest=True)
-def form_start_sync(company_sync: str):
+def form_start_sync(company_sync_scheduler: str):
 	# Start sync from form
-	return frappe.get_doc("Company Sync", company_sync).start_sync()	
+	return frappe.get_doc("Company Sync Scheduler", company_sync_scheduler).start_sync()	
 
 @frappe.whitelist(allow_guest=True)
-def get_sync_logs(company_sync: str):
-	return frappe.get_doc("Company Sync", company_sync).get_sync_logs()
+def get_sync_logs(company_sync_scheduler: str):
+	return frappe.get_doc("Company Sync Scheduler", company_sync_scheduler).get_sync_logs()
 
 
-def start_sync(company_sync):
+def start_sync(company_sync_scheduler):
 	"""This method runs in background job"""
 	try:
 		# Execute sync process
-		Syncer(doc_name=company_sync).sync()
+		Syncer(doc_name=company_sync_scheduler).sync()
 	except JobTimeoutException:
 		# Handle timeout
 		frappe.db.rollback()
-		doc = frappe.get_doc("Company Sync", company_sync)
+		doc = frappe.get_doc("Company Sync Scheduler", company_sync_scheduler)
 		doc.db_set("status", "Timed Out")
 	except Exception:
 		# Handle general errors
 		frappe.db.rollback()
-		doc = frappe.get_doc("Company Sync", company_sync)
+		doc = frappe.get_doc("Company Sync Scheduler", company_sync_scheduler)
 		doc.db_set("status", "Error")
 		doc.log_error("Company Sync failed")
 	finally:

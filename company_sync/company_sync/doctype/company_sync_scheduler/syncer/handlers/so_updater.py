@@ -1,13 +1,13 @@
 # File: company_sync/handlers/so_updater.py
 import datetime
 import logging
-from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
-from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
+from company_sync.company_sync.doctype.company_sync_scheduler.database.engine import get_engine
+from company_sync.company_sync.doctype.company_sync_scheduler.database.unit_of_work import UnitOfWork
 from sqlalchemy import text
 import frappe
 from sqlalchemy.orm import sessionmaker
-from company_sync.company_sync.doctype.company_sync.syncer.utils import last_day_of_month
-from company_sync.company_sync.doctype.company_sync.syncer.observer.frappe import FrappeProgressObserver
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import last_day_of_month
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.frappe import FrappeProgressObserver
 
 class SOUpdater:
     def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, doc_name: str, logger=None):

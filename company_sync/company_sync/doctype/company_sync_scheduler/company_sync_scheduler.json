@@ -78,6 +78,7 @@
    "fieldname": "company_file",
    "fieldtype": "Attach",
    "label": "Company File",
+   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -94,10 +95,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-25 09:55:02.095744",
+ "modified": "2025-02-25 12:38:02.853408",
  "modified_by": "Administrator",
  "module": "Company Sync",
- "name": "Company Sync",
+ "name": "Company Sync Scheduler",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

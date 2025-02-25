@@ -1,6 +1,6 @@
 # File: company_sync/repositories/crm_repository.py
-from company_sync.company_sync.doctype.company_sync.database.engine import get_engine
-from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
+from company_sync.company_sync.doctype.company_sync_scheduler.database.engine import get_engine
+from company_sync.company_sync.doctype.company_sync_scheduler.database.unit_of_work import UnitOfWork
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker

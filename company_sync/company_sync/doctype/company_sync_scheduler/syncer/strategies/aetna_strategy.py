@@ -1,6 +1,6 @@
 # File: company_sync/strategies/aetna_strategy.py
-from company_sync.company_sync.doctype.company_sync.syncer.strategies.base_strategy import BaseStrategy
-from company_sync.company_sync.doctype.company_sync.syncer.utils import calculate_term_date, get_fields
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.base_strategy import BaseStrategy
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import calculate_term_date, get_fields
 
 class AetnaStrategy(BaseStrategy):
     def __init__(self):
