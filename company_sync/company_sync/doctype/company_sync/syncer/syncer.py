@@ -17,7 +17,6 @@ from company_sync.company_sync.doctype.company_sync.syncer.services.so_service i
 from company_sync.company_sync.doctype.company_sync.config.logging import setup_logging
 
 from company_sync.company_sync.doctype.company_sync.database.unit_of_work import UnitOfWork
-from company_sync.company_sync.doctype.company_sync.syncer.record import RecordProcessor
 
 # Main Syncer class that orchestrates the VTiger CRM synchronization
 class Syncer:
@@ -26,7 +25,6 @@ class Syncer:
             frappe.logger().error("Database engine not initialized")
             return False
         
-        from mabecenter.mabecenter.doctype.vtigercrm_sync.syncer.services.query import QueryService
         
         # Initialize syncer with document name and required components
         self.doc_name = doc_name
@@ -34,10 +32,6 @@ class Syncer:
         self.progress_observer = FrappeProgressObserver()
         self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
         self.config = SyncConfig()
-  
-        # Initialize services
-        self.query_service = QueryService(self.config)
-        self.record_processor = RecordProcessor(self.config)
 
     def sync(self):        
         try:
