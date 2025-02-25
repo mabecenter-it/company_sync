@@ -3,8 +3,6 @@
 
 frappe.ui.form.on("Company Sync", {
 	setup(frm) {
-		frm.toggle_display("section_sync_preview", false);
-		console.log("Setup Step")
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
 			// Validar que el sync corresponda al documento actual
 			if (company_sync !== frm.doc.name) return;
@@ -12,15 +10,41 @@ frappe.ui.form.on("Company Sync", {
 			updateProgressBar(frm, percentage);
 			//reloadDocument(frm);
 		})
-		frappe.realtime.on("company_sync_error_log", ({ error_log, company_sync }) => {
-			console.log(error_log)
+		frappe.realtime.on("company_sync_error_log", ({ error_log, company_sync, memberID, company, broker }) => {
 			console.log(company_sync)
 			console.log(frm.doc.name)
 
 			if (company_sync !== frm.doc.name) return;
 			
-			render_sync_log(frm);
+			//render_sync_log(frm);
 			//reloadDocument(frm);
+
+			frm.toggle_display("section_sync_log_preview", true);
+			const $field = frm.get_field("sync_log_preview").$wrapper;
+
+			// Mapear cada log para crear una fila de la tabla
+			let newRow = `<tr>
+				<td>${memberID}</td>
+				<td>${error_log}</td>
+			</tr>`;
+
+			// Verificar si ya existe la tabla
+			let $table = $field.find("table");
+			if (!$table.length) {
+				// Si la tabla no existe, crearla con el encabezado
+				$table = $(`
+					<table class="table table-bordered">
+						<tr class="text-muted">
+							<th width="20%">${__("Member ID")}</th>
+							<th width="80%">${__("Message")}</th>
+						</tr>
+					</table>
+				`);
+				$field.append($table);
+			}
+		
+			// Agregar la nueva fila a la tabla existente
+			$table.append(newRow);
 		})
 	},
 	onload(frm) {
@@ -52,7 +76,6 @@ frappe.ui.form.on("Company Sync", {
 		}
 	},
 	start_sync(frm) {
-		frm.toggle_display("section_sync_preview", true);
 		frm.call({
 			method: "form_start_sync",
 			args: { company_sync: frm.doc.name },
@@ -62,32 +85,50 @@ frappe.ui.form.on("Company Sync", {
 				frm.disable_save();
 			}
 		});
+		frm.toggle_display("section_sync_preview", true);
 	},
 	render_sync_log(frm) {
 		console.log("Render Sync Log")
 		console.log(frm.doc.name)
-		frm.call({
-			doc: frm.doc,
+		if (frm.is_new()) {
+			return;
+		}
+		frappe.call({
 			method: "company_sync.company_sync.doctype.company_sync.company_sync.get_sync_logs",
 			args: { company_sync: frm.doc.name },
-		}).then((r) => {
-			if (r.message === true) {
+			callback: function (r) {
+				console.log(r)
+				console.log(r.message.length)
+				if (r.message.length === 0) {
+					frm.toggle_display("section_sync_log_preview", false);
+					return;
+				}
+				frm.toggle_display("section_sync_log_preview", true);
+				const $wrapper = frm.get_field("sync_log_preview").$wrapper;
+				$wrapper.empty();
+
 				frm.disable_save();
 				let logs = r.message;
-				console.log("logs!!!")
+				console.log(r)
+
+				// Mapear cada log para crear una fila de la tabla
 				let rows = logs.map((log) => {
-					return log;
-				});
-				frm.get_field("import_log_preview").$wrapper.html(`
+				return `<tr>
+					<td>${log.memberid}</td>
+					<td>${log.messages}</td>
+				</tr>`;
+				}).join('');
+
+				$(`
 					<table class="table table-bordered">
 						<tr class="text-muted">
-							<th width="20%">${__("Member ID")}</th>
-							<th width="80%">${__("Message")}</th>
+						<th width="20%">${__("Member ID")}</th>
+						<th width="80%">${__("Message")}</th>
 						</tr>
 						${rows}
 					</table>
-				`);
-			}
+				`).appendTo($wrapper);
+			},
 		});
 	},
 	show_sync_log(frm) {

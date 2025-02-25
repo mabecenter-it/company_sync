@@ -1,20 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{name1} Sync on {creation}",
+ "autoname": "format:{company}/{broker} Sync on {creation}",
  "beta": 1,
  "creation": "2024-11-07 14:42:40.143548",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "company_data_section",
-  "name1",
   "company",
   "company_file",
   "status",
   "column_break_ntli",
-  "sync_on",
   "broker",
+  "sync_on",
   "section_sync_preview",
   "sync_preview",
   "section_sync_log_preview",
@@ -25,13 +24,6 @@
    "fieldname": "company_data_section",
    "fieldtype": "Section Break",
    "label": "Company Data"
-  },
-  {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Name",
-   "reqd": 1
   },
   {
    "default": "Pending",
@@ -56,6 +48,7 @@
   {
    "fieldname": "section_sync_preview",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Preview"
   },
   {
@@ -66,25 +59,31 @@
   {
    "fieldname": "company",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Company",
    "options": "Oscar\nAmbetter\nAetna\nMolina",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "broker",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Broker",
    "options": "BS\nADC",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "company_file",
    "fieldtype": "Attach",
-   "label": "Company File"
+   "label": "Company File",
+   "set_only_once": 1
   },
   {
    "fieldname": "section_sync_log_preview",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Sync Log"
   },
   {
@@ -95,7 +94,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-24 12:47:20.847763",
+ "modified": "2025-02-25 09:55:02.095744",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",

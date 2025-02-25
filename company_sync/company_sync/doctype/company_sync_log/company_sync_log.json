@@ -8,6 +8,7 @@
   "row_indexes",
   "success",
   "docname",
+  "memberid",
   "messages",
   "exception",
   "log_index"
@@ -54,11 +55,16 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Log Index"
+  },
+  {
+   "fieldname": "memberid",
+   "fieldtype": "Data",
+   "label": "Member ID"
   }
  ],
  "in_create": 1,
  "links": [],
- "modified": "2025-02-24 16:34:16.488110",
+ "modified": "2025-02-25 09:30:41.125622",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",

@@ -20,11 +20,11 @@ class FrappeProgressObserver(ProgressObserver):
             }
         )
     
-    def updateLog(self, error_log: str, context: dict, event = 'company_sync_error_log'):
+    def updateLog(self, context: dict, event = 'company_sync_error_log'):
         frappe.publish_realtime(
             event,
             {
-                'error_log': error_log,
+                'error_log': context['message'],
                 'company_sync': context['doc_name'],
                 'memberID': context['memberID'],
                 'company': context['company'],

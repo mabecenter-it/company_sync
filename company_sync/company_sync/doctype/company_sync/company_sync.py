@@ -56,7 +56,7 @@ class CompanySync(Document):
 
 		return frappe.get_all(
 			"Company Sync Log",
-			fields=["success", "docname", "messages", "exception", "row_indexes"],
+			fields=["*"],
 			filters={"company_sync": self.name},
 			limit_page_length=5000,
 			order_by="log_index",

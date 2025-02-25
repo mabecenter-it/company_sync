@@ -129,12 +129,13 @@ class SOUpdater:
             "success": "success",
             "company_sync": self.doc_name,
             "row_indexes": index,
-            "docname": self.doc_name,
+            "docname": f"{memberID}-{frappe.utils.now()}",
+            "memberid": memberID,
             "messages": error_log,
             "exception": "log_details.get('exception')",
         }).db_insert()
         frappe.db.commit() 
-        self.progress_observer.updateLog(error_log, {'doc_name': self.doc_name, 'memberID': memberID, 'company': company, 'broker': broker})
+        self.progress_observer.updateLog({'message': error_log, 'doc_name': self.doc_name, 'memberID': memberID, 'company': company, 'broker': broker})
         return index + 1
 
 

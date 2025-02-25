@@ -88,6 +88,10 @@ app_license = "mit"
 before_install = "company_sync.installer.before_install"
 after_migrate = "company_sync.installer.before_install"
 
+workspaces = [
+    {"name": "company_sync", "workspace": "company_sync"}
+]
+
 # Uninstallation
 # ------------
 
