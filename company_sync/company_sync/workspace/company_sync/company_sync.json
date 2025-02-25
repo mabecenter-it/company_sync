@@ -37,7 +37,7 @@
    "is_query_report": 0,
    "label": "Logs",
    "link_count": 0,
-   "link_to": "Company Sync Logs",
+   "link_to": "Company Sync Log",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
