@@ -7,11 +7,10 @@ def get_setup_stages(args=None):
 			"status": _("Setting item default"),
 			"fail_msg": "Failed to set defaults",
 			"tasks": [
-				{"fn": setup_item_default, "args": args, "fail_msg": _("Failed to setup defaults")},
+				{"fn": setup_company_sync_settings, "args": args, "fail_msg": _("Failed to setup defaults")},
 			],
 		},
 	]
 
-def setup_item_default(args):
-	#fixtures.install()
-	pass
+def setup_company_sync_settings(args):
+	fixtures.create_company_sync_settings(args)

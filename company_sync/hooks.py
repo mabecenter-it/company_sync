@@ -89,6 +89,7 @@ before_install = "company_sync.installer.before_install"
 after_migrate = "company_sync.installer.before_install"
 
 setup_wizard_requires = "assets/company_sync/js/setup_wizard.js"
+setup_wizard_stages = "company_sync.setup.setup_wizard.setup_wizard.get_setup_stages"
 
 # Uninstallation
 # ------------

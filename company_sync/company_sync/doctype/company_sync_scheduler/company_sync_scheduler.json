@@ -61,7 +61,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Company",
-   "options": "Oscar\nAmbetter\nAetna\nMolina",
+   "options": "\nOscar\nAmbetter\nAetna\nMolina",
    "reqd": 1,
    "set_only_once": 1
   },
@@ -70,7 +70,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Broker",
-   "options": "BS\nADC",
+   "options": "\nBS\nADC",
    "reqd": 1,
    "set_only_once": 1
   },
@@ -95,7 +95,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-25 12:38:02.853408",
+ "modified": "2025-02-26 05:55:31.861207",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Scheduler",

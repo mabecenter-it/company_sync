@@ -3,13 +3,22 @@
 
 
 import frappe
+from frappe.desk.page.setup_wizard.setup_wizard import make_records
 
 
-def install():
-	doc = frappe.new_doc('Item')
-	doc.update({
-		"item_code": "BS",
-		"item_group": "Services",
-		"is_stock_item": 0,
-	})
-	doc.insert(ignore_permissions=True, ignore_if_duplicate=True)
+def create_company_sync_settings(args):
+	frappe.get_doc(
+		{
+			"doctype": "Company Sync Settings",
+			"host": args.get("host"),
+			"user": args.get("user"),
+			"type": args.get("type"),
+			"name_db": args.get("name_db"),
+			"port": args.get("port"),
+			"password": args.get("password"),
+			"connector": args.get("connector"),
+			"user_api": args.get("user_db"),
+			"endpoint": args.get("endpoint"),
+			"token": args.get("token"),
+		}
+	).insert()
