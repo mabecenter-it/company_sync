@@ -24,8 +24,27 @@ frappe.ui.form.on("Company Sync Scheduler", {
 
 			// Mapear cada log para crear una fila de la tabla
 			let newRow = `<tr>
-				<td>${memberID}</td>
+				<td>(+) ${memberID}</td>
 				<td>${error_log}</td>
+				<td>
+					<div class="control-input-wrapper">
+						<div class="control-input flex align-center">
+							<select type="text" autocomplete="off" class="input-with-feedback form-control ellipsis review-select">
+								<option></option>
+								<option value="Create Issue">Create Issue</option>
+								<option value="Portal Error">Portal Error</option>
+								<option value="Sync Error">Sync Error</option>
+							</select>
+							<div class="select-icon ">
+								<svg class="icon  icon-sm" style="" aria-hidden="true">
+									<use class="" href="#icon-select"></use>
+								</svg>
+							</div>
+						</div>
+						<div class="control-value like-disabled-input" style="display: none;">MySQL</div>
+						<p class="help-box small text-muted"></p>
+					</div>
+				</td>
 			</tr>`;
 
 			// Verificar si ya existe la tabla
@@ -36,7 +55,8 @@ frappe.ui.form.on("Company Sync Scheduler", {
 					<table class="table table-bordered">
 						<tr class="text-muted">
 							<th width="20%">${__("Member ID")}</th>
-							<th width="80%">${__("Message")}</th>
+							<th width="65%">${__("Message")}</th>
+							<th width="15%">${__("Review")}</th>
 						</tr>
 					</table>
 				`);
@@ -146,9 +166,9 @@ frappe.ui.form.on("Company Sync Scheduler", {
 				$(`
 					<table class="table table-bordered">
 						<tr class="text-muted">
-						<th width="20%">${__("Member ID")}</th>
-						<th width="65%">${__("Message")}</th>
-						<th width="15%">${__("Review")}</th>
+							<th width="20%">${__("Member ID")}</th>
+							<th width="65%">${__("Message")}</th>
+							<th width="15%">${__("Review")}</th>
 						</tr>
 						${rows}
 					</table>

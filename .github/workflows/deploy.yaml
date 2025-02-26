@@ -1,0 +1,119 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-24.04
+    environment: Develop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print username
+        run: 'echo "Registry username: ${{ secrets.REGISTRY_USERNAME }}"'
+          
+      # Paso 1: Clonar frappe_docker
+      - name: Checkout frappe_docker
+        uses: actions/checkout@v2
+        with:
+          repository: frappe/frappe_docker
+          path: frappe_docker
+          depth: 0
+      # Paso 2: Configurar Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Paso 3: Login en el registry Docker
+      - name: Login to Docker registry
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      # Paso 4: Build y Push de la imagen Docker
+      - name: Calculate Image Tag
+        id: tag
+        run: |
+          # Obtén el último tag de la rama (si no hay, usa "0.0.0")
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          
+          # Extraer las partes del tag
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
+          
+          # Incrementar el PATCH
+          PATCH=$((PATCH + 1))
+          
+          # Crear un nuevo tag basado en el incremento
+          NEW_TAG="$MAJOR.$MINOR.$PATCH"
+
+      
+          # Obtener el SHA corto del commit actual
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          
+          # Crear el tag completo combinando NEW_TAG y COMMIT_SHA
+          FULL_TAG="${NEW_TAG}-${COMMIT_SHA}"
+          
+          # Exportar los tags
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          echo "FULL_TAG=$FULL_TAG" >> $GITHUB_ENV
+          
+          echo "Previous tag: $LAST_TAG"
+          echo "New semantic tag: $NEW_TAG"
+          echo "Full tag with commit: $FULL_TAG"
+
+      - name: Build and Push Docker Image
+        env:
+          APPS_JSON_BASE64: ${{ secrets.APPS_JSON_BASE64 }}
+        run: |
+          # Verificar que tenemos el valor
+          echo "Apps JSON length: ${#APPS_JSON_BASE64}"
+          
+          # Hacer el build usando la variable de ambiente
+          docker build \
+            --build-arg FRAPPE_PATH=https://github.com/frappe/frappe \
+            --build-arg FRAPPE_BRANCH=version-15 \
+            --build-arg APPS_JSON_BASE64="${APPS_JSON_BASE64}" \
+            --tag docker.io/mabecenter/erpnext:${{ env.FULL_TAG }} \
+            --file frappe_docker/images/layered/Containerfile .
+          
+          # Push de la imagen
+          docker push docker.io/mabecenter/erpnext:${{ env.FULL_TAG }}
+
+      # Paso 6: Clonar el repositorio de infra/helm
+      - name: Checkout Infra Repo
+        uses: actions/checkout@v2
+        with:
+          repository: mabecenter-it/argocd-app
+          path: argocd-app
+          ref: company_sync
+          token: ${{ secrets.GH_PAT }}
+      
+      # Paso 7: Actualizar solo los valores necesarios en el archivo existente
+      - name: Update values in infra Repo
+        run: |
+          # Actualizar solo el tag en el archivo existente
+          sed -i "s|^\(\s*image:\s*mabecenter/erpnext:\).*|\1${FULL_TAG}|" argocd-app/docker-compose.yml
+
+      # Paso 8: Commit y push del nuevo archivo
+      - name: Commit and Push Changes
+        run: |
+          cd argocd-app
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Configurar el token directamente en la URL
+          git remote set-url origin "https://${{ secrets.GH_PAT }}@github.com/mabecenter-it/argocd-app.git"
+          git add docker-compose.yml
+          git commit -m "Update Docker image to ${{ env.FULL_TAG }}"
+          git push origin company_sync
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+
+permissions:
+  contents: read
+  packages: write

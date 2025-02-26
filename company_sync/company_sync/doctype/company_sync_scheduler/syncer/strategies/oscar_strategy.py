@@ -15,7 +15,8 @@ class OscarStrategy(BaseStrategy):
         if 'Member ID' in df.columns:
             df.rename(columns={"Member ID": "memberID"}, inplace=True)
         df_normalize = self.normalize_columns(df)
-        return df_normalize
+
+        return df_normalize[df_normalize['policyStatus']!= 'Inactive']
 
     def normalize_columns(self, df):
         # Mapeo explícito para los nombres de columnas que queremos renombrar

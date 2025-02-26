@@ -67,11 +67,12 @@ class SOUpdater:
                         paidThroughDateCRM = results[12]
                         salesOrderTermDateCRM = results[13]
                         salesOrderEffecDateCRM = results[25]
+                        salesOrderBrokerCRM = results[16]
                         salesorder_no = results[1]
 
                         if problem == 'Problema Pago':
                             pass
-                        elif salesOrderTermDateCRM:
+                        elif salesOrderTermDateCRM and salesOrderTermDateCRM == policyTermDate:
                             if paidThroughDate and paidThroughDate >= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date():
                                 query_sales = f"SELECT * FROM SalesOrder WHERE salesorder_no = '{salesorder_no}' LIMIT 1;"
                                 [salesOrderData] = self.vtiger_client.doQuery(query_sales)
@@ -89,16 +90,16 @@ class SOUpdater:
                             else:
                                 if not salesOrderEffecDateCRM > datetime.date.today():
                                     index += 1 
-                                    #self.logger.info(f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                    self.update_logs(memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", index)
-                                else:
-                                    index += 1 
-                                    #self.logger.info(f"Es nueva", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                    self.update_logs(memberID, self.company, self.broker, "Es nueva", index)
+                                    if not salesOrderBrokerCRM == 'BROKER ERROR':
+                                        #self.logger.info(f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
+                                        self.update_logs(memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", index)
                         else:
                             index += 1 
-                            #self.logger.info(f"No se encontró una orden de venta pero si está en el portal", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                            self.update_logs(memberID, self.company, self.broker, "No se encontró una orden de venta pero si está en el portal")
+                            if salesOrderTermDateCRM == policyTermDate:
+                                #self.logger.info(f"No se encontró una orden de venta pero si está en el portal", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
+                                self.update_logs(memberID, self.company, self.broker, "No se encontró una orden de venta pero si está en el portal")
+                            else:
+                                self.update_logs(memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
                     elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1), index):
                         index += 1 
                         #self.logger.info(f"La póliza no está en el crm", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
@@ -110,19 +111,7 @@ class SOUpdater:
                 self.update_logs(memberID, self.company, self.broker, f"Error procesando memberID {memberID}: {e}", index)
                 return index
                 
-    def update_logs(self, memberID, company, broker, error_log, index):
-        """ frappe.get_doc(
-            {
-                "doctype": "Data Import Log",
-                "log_index": log_index,
-                "success": log_details.get("success"),
-                "data_import": data_import,
-                "row_indexes": json.dumps(log_details.get("row_indexes")),
-                "docname": log_details.get("docname"),
-                "messages": json.dumps(log_details.get("messages", "[]")),
-                "exception": log_details.get("exception"),
-            }
-        ).db_insert() """
+    def update_logs(self, memberID, company, broker, error_log, index = 0):
         frappe.get_doc({
             "doctype": "Company Sync Log",
             "log_index": "log_index",
