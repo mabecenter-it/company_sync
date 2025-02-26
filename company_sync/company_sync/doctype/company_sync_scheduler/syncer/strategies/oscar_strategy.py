@@ -31,3 +31,4 @@ class OscarStrategy(BaseStrategy):
 
     def get_fields(self) -> dict:
         return self.fields
+    
