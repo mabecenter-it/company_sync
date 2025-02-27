@@ -71,7 +71,7 @@
  ],
  "in_create": 1,
  "links": [],
- "modified": "2025-02-27 09:45:51.755802",
+ "modified": "2025-02-27 14:49:29.757527",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",
@@ -90,13 +90,15 @@
    "write": 1
   },
   {
+   "create": 1,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Syncer User",
-   "share": 1
+   "share": 1,
+   "write": 1
   }
  ],
  "read_only": 1,
