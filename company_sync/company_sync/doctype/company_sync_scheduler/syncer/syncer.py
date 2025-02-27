@@ -1,4 +1,3 @@
-from company_sync.company_sync.doctype.company_sync_scheduler.syncer.WSClient import VTigerWSClient
 import frappe
 from company_sync.company_sync.overrides.exception.sync_error import SyncError
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +9,8 @@ from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.fr
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.base_strategy import BaseStrategy
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.aetna_strategy import AetnaStrategy
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.oscar_strategy import OscarStrategy
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.ambetter_strategy import AmbetterStrategy
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.strategies.molina_strategy import MolinaStrategy
 
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import get_fields
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.services.so_service import SOService
@@ -46,6 +47,10 @@ class Syncer:
                 strategy = AetnaStrategy()
             elif company == 'Oscar':
                 strategy = OscarStrategy()
+            elif company == 'Ambetter':
+                strategy = AmbetterStrategy()
+            elif company == 'Molina':
+                strategy = MolinaStrategy()   
             else:
                 # Estrategia por defecto (sin lógica especial)
                 class DefaultStrategy(BaseStrategy):

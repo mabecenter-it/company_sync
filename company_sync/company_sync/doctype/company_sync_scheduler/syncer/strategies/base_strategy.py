@@ -6,8 +6,3 @@ class BaseStrategy(ABC):
     def apply_logic(self, df):
         """Aplica la lógica específica de la compañía al DataFrame."""
         pass
-
-    @abstractmethod
-    def get_fields(self) -> dict:
-        """Retorna el mapeo de campos para la compañía."""
-        pass

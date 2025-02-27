@@ -7,13 +7,6 @@ class AetnaStrategy(BaseStrategy):
         self.fields = get_fields("aetna")
     
     def apply_logic(self, df):
-        if 'Effective Date' in df.columns:
-            df['Policy Term Date'] = df['Effective Date'].apply(lambda d: calculate_term_date(d, self.fields['format']))
+        df_normalize = df.rename(columns={v: k for k, v in self.fields.items()})
 
-        # Renombrar la columna "Member ID" a "memberID"
-        if 'Member ID' in df.columns:
-            df.rename(columns={"Member ID": "memberID"}, inplace=True)
-        return df
-    
-    def get_fields(self) -> dict:
-        return self.fields
+        return df_normalize[df_normalize['policyStatus'] == 'Active' & df_normalize['Relationship'] == 'Self']

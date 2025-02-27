@@ -7,28 +7,9 @@ class OscarStrategy(BaseStrategy):
         self.fields = get_fields("oscar")
     
     def apply_logic(self, df):
-        if 'Policy status' in df.columns:
-            df['Paid Through Date'] = df['Policy status'].apply(
-                lambda s: calculate_paid_through_date(s, self.fields['format'])
-            )
-        # Renombrar la columna "Member ID" a "memberID"
-        if 'Member ID' in df.columns:
-            df.rename(columns={"Member ID": "memberID"}, inplace=True)
-        df_normalize = self.normalize_columns(df)
+        df['Paid Through Date'] = df['Policy status'].apply(
+            lambda s: calculate_paid_through_date(s, self.fields['format'])
+        )
+        df_normalize = df.rename(columns={v: k for k, v in self.fields.items()})
 
         return df_normalize[df_normalize['policyStatus']!= 'Inactive']
-
-    def normalize_columns(self, df):
-        # Mapeo explícito para los nombres de columnas que queremos renombrar
-        mapping = {
-            "Member ID": "memberID",
-            "Paid Through Date": "paidThroughDate",
-            "Coverage start date": "policyEffecDate",
-            "Coverage end date": "policyTermDate",
-            "Policy status": "policyStatus",
-        }
-        return df.rename(columns=mapping)
-
-    def get_fields(self) -> dict:
-        return self.fields
-    

@@ -16,6 +16,18 @@ def get_fields(company: str) -> dict:
             'policyTermDate': 'Coverage end date',
             'format': '%B %d, %Y'
         },
+        'ambetter': {
+            'memberID': 'Policy Number',
+            'paidThroughDate': 'Paid Through Date',
+            'policyTermDate': 'Policy Term Date',
+            'format': '%m/%d/%Y'
+        },
+        'molina': {
+            'memberID': 'Subscriber_ID',
+            'paidThroughDate': 'Paid_Through_Date',
+            'policyTermDate': 'Broker_End_Date',
+            'format': '%m/%d/%Y'
+        }
     }
     default = {
         'memberID': 'Member ID',
