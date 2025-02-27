@@ -86,7 +86,7 @@ app_license = "mit"
 # after_install = "company_sync.install.after_install"
 
 before_install = "company_sync.installer.before_install"
-after_install = "company_sync.installer.after_install"
+#after_install = "company_sync.installer.after_install"
 #after_migrate = "company_sync.installer.before_install"
 
 setup_wizard_requires = "assets/company_sync/js/setup_wizard.js"
@@ -103,7 +103,8 @@ setup_wizard_stages = "company_sync.setup.setup_wizard.setup_wizard.get_setup_st
 # To set up dependencies/integrations with other apps
 # Name of the app being installed is passed as an argument
 
-# before_app_install = "company_sync.utils.before_app_install"
+#before_app_install = "company_sync.utils.before_app_install"
+before_app_install = "company_sync.installer.after_install"
 # after_app_install = "company_sync.utils.after_app_install"
 
 # Integration Cleanup
