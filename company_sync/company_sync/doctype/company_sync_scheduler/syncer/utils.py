@@ -14,7 +14,8 @@ def get_fields(company: str) -> dict:
             'memberID': 'Member ID',
             'paidThroughDate': 'Paid Through Date',
             'policyTermDate': 'Coverage end date',
-            'format': '%B %d, %Y'
+            'format': '%B %d, %Y',
+            'policyStatus': 'Policy status'
         },
         'ambetter': {
             'memberID': 'Policy Number',

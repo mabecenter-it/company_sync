@@ -77,6 +77,8 @@ class VTigerWSClient:
         connection = urllib.request.urlopen(req)
         response = connection.read()
         if tojson == True: response = self.toJSON(response)
+        if self.hasError(response):
+            print('Error:', response)
         return response
 
     '''
