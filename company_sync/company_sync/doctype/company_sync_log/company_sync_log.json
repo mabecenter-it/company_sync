@@ -5,46 +5,37 @@
  "engine": "InnoDB",
  "field_order": [
   "company_sync",
-  "row_indexes",
-  "success",
   "docname",
   "memberid",
-  "review",
   "messages",
-  "exception",
-  "log_index"
+  "review",
+  "exception"
  ],
  "fields": [
   {
    "fieldname": "company_sync",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Company Sync",
-   "options": "Company Sync Scheduler"
-  },
-  {
-   "fieldname": "row_indexes",
-   "fieldtype": "Code",
-   "label": "Row Indexes",
-   "options": "JSON"
-  },
-  {
-   "default": "0",
-   "fieldname": "success",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Success"
+   "options": "Company Sync Scheduler",
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "fieldname": "docname",
    "fieldtype": "Data",
-   "label": "Reference Name"
+   "label": "Reference Name",
+   "read_only": 1,
+   "reqd": 1
   },
   {
+   "columns": 3,
    "fieldname": "messages",
-   "fieldtype": "Code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Messages",
-   "options": "JSON"
+   "options": "JSON",
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "fieldname": "exception",
@@ -52,55 +43,32 @@
    "label": "Exception"
   },
   {
-   "fieldname": "log_index",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Log Index"
-  },
-  {
+   "columns": 1,
    "fieldname": "memberid",
    "fieldtype": "Data",
-   "label": "Member ID"
+   "in_list_view": 1,
+   "label": "Member ID",
+   "read_only": 1,
+   "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "review",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Review",
    "options": "\nCreate Issue\nPortal Error\nSync Error"
   }
  ],
  "in_create": 1,
+ "istable": 1,
  "links": [],
- "modified": "2025-02-27 14:49:29.757527",
+ "modified": "2025-02-28 15:44:38.634487",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",
  "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Syncer User",
-   "share": 1,
-   "write": 1
-  }
- ],
+ "permissions": [],
  "read_only": 1,
  "sort_field": "creation",
  "sort_order": "DESC",

@@ -85,8 +85,9 @@ class SOUpdater:
                                     response = self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesOrderData)
                                     if response and not response['success']:
                                         index += 1 
-                                        #self.logger.info(f"info actualizando la orden de venta: {response['error']}", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                        #self.update_logs(memberID, self.company, self.broker, f"info actualizando la orden de venta: {response['error']}", index)
+                                        if not response['error']['message'] == "Permission to perform the operation is denied":
+                                            #self.logger.info(f"No se encontró la orden de venta", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
+                                            self.update_logs(memberID, self.company, self.broker, "No se encontró la orden de venta", index)
                             else:
                                 if not salesOrderEffecDateCRM > datetime.date.today():
                                     index += 1 
