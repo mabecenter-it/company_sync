@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"MKitHAnT4f\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><a href=\\\"/app/company-sync-scheduler\\\">Company Sync</a></span>\",\"col\":12}},{\"id\":\"mrDEL4UgQK\",\"type\":\"card\",\"data\":{\"card_name\":\"Storage\",\"col\":4}},{\"id\":\"CA-gxM4FvX\",\"type\":\"card\",\"data\":{\"card_name\":\"Core\",\"col\":4}}]",
+ "content": "[{\"id\":\"mrDEL4UgQK\",\"type\":\"card\",\"data\":{\"card_name\":\"Storage\",\"col\":4}},{\"id\":\"CA-gxM4FvX\",\"type\":\"card\",\"data\":{\"card_name\":\"Core\",\"col\":4}}]",
  "creation": "2023-06-22 20:12:29.687295",
  "custom_blocks": [],
  "docstatus": 0,
@@ -35,35 +35,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Storage",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Company Sync",
-   "link_count": 0,
-   "link_to": "Company Sync Scheduler",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Company Sync Log",
-   "link_count": 0,
-   "link_to": "Company Sync Log",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Core",
    "link_count": 1,
    "link_type": "DocType",
@@ -79,9 +50,28 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Storage",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Company Sync",
+   "link_count": 0,
+   "link_to": "Company Sync Scheduler",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-02-25 13:08:31.267701",
+ "modified": "2025-03-03 16:24:25.913852",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
