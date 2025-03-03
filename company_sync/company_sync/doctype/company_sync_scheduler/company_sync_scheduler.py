@@ -62,12 +62,9 @@ class CompanySyncScheduler(Document):
 		)
 
 @frappe.whitelist(allow_guest=True)
-def update_log_review(company_sync_scheduler: str, memberid: str, review: str):
+def update_log_review(name: str, review: str):
 	#return frappe.get_doc("Company Sync Scheduler", company_sync_scheduler, filter["memberid"]).update_review(review)
-	doc_log =  frappe.get_last_doc(
-		"Company Sync Log",
-		filters={ "company_sync": company_sync_scheduler, "memberid": memberid }
-	)
+	doc_log =  frappe.get_doc("Company Sync Log", name)
 	doc_log.review = review
 	doc_log.save()
 

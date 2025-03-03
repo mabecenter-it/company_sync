@@ -31,4 +31,15 @@ class FrappeProgressObserver(ProgressObserver):
                 'broker': context['broker']
             }
         )
+    
+    
+    def updateSuccess(self, context: dict, event = 'company_sync_success'):
+        frappe.publish_realtime(
+            event,
+            {
+                'success': context['success'],
+                'company_sync': context['doc_name']
+            }
+        )
+
 

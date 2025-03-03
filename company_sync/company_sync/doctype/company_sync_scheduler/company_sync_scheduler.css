@@ -1,0 +1,4 @@
+.grid-heading-row div[data-fieldname="messages"] {
+    cursor: pointer;
+    text-decoration: underline;
+}

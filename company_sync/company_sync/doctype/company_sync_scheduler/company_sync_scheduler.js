@@ -1,70 +1,64 @@
 // Copyright (c) 2024, Dante Devenir and contributors
 // For license information, please see license.txt
+frappe.ui.form.on("Company Sync Log", "review", function(frm, cdt, cdn) {
+	var item = locals[cdt][cdn]; // this is where the magic happens
+	// locals is a global array that contains all the local documents opened by the user
+	// item is the row that the user is working with
+	// to what you need to do and update it back
+
+	console.log(item);
+	
+	let newValue = item.review;
+	let memberID = item.memberid;
+
+	frappe.call({
+		method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.update_log_review",
+		args: { name: item.name, review: newValue },
+		callback: function (r) {
+			console.log("Update")
+		}
+	});
+});
 
 frappe.ui.form.on("Company Sync Scheduler", {
 	setup(frm) {
+		if (!frm._has_shown_sync_log_preview) {
+			frm._has_shown_sync_log_preview = false;
+		}
+
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
 			// Validar que el sync corresponda al documento actual
 			if (company_sync !== frm.doc.name) return;
-			
+
+			// Solo la primera vez se muestra la sección
+			if (!frm._has_shown_sync_log_preview) {
+				frm.toggle_display("section_sync_log_preview", true);
+				frm._has_shown_sync_log_preview = true;
+			}
+
 			updateProgressBar(frm, percentage);
 			//reloadDocument(frm);
-		})
+		});
 		frappe.realtime.on("company_sync_error_log", ({ error_log, company_sync, memberID, company, broker }) => {
-			console.log(company_sync)
-			console.log(frm.doc.name)
+
+			var d = frm.add_child("sync_log");
+			d.memberid = memberID;
+			d.messages = error_log;
+
+			frm.refresh_field('sync_log');
+
+			
+
+			if (company_sync !== frm.doc.name) return;
+
+			frm.refresh_field('sync_log');
+			
+		})
+		frappe.realtime.on("company_sync_success", ({ company_sync }) => {
 
 			if (company_sync !== frm.doc.name) return;
 			
-			//render_sync_log(frm);
-			//reloadDocument(frm);
-
-			frm.toggle_display("section_sync_log_preview", true);
-			const $field = frm.get_field("sync_log_preview").$wrapper;
-
-			// Mapear cada log para crear una fila de la tabla
-			let newRow = `<tr>
-				<td>(+) ${memberID}</td>
-				<td>${error_log}</td>
-				<td>
-					<div class="control-input-wrapper">
-						<div class="control-input flex align-center">
-							<select type="text" autocomplete="off" class="input-with-feedback form-control ellipsis review-select">
-								<option></option>
-								<option value="Create Issue">Create Issue</option>
-								<option value="Portal Error">Portal Error</option>
-								<option value="Sync Error">Sync Error</option>
-							</select>
-							<div class="select-icon ">
-								<svg class="icon  icon-sm" style="" aria-hidden="true">
-									<use class="" href="#icon-select"></use>
-								</svg>
-							</div>
-						</div>
-						<div class="control-value like-disabled-input" style="display: none;">MySQL</div>
-						<p class="help-box small text-muted"></p>
-					</div>
-				</td>
-			</tr>`;
-
-			// Verificar si ya existe la tabla
-			let $table = $field.find("table");
-			if (!$table.length) {
-				// Si la tabla no existe, crearla con el encabezado
-				$table = $(`
-					<table class="table table-bordered">
-						<tr class="text-muted">
-							<th width="20%">${__("Member ID")}</th>
-							<th width="65%">${__("Message")}</th>
-							<th width="15%">${__("Review")}</th>
-						</tr>
-					</table>
-				`);
-				$field.append($table);
-			}
-		
-			// Agregar la nueva fila a la tabla existente
-			$table.append(newRow);
+			successProgressBar(frm);
 		})
 	},
 	onload(frm) {
@@ -75,10 +69,13 @@ frappe.ui.form.on("Company Sync Scheduler", {
 	refresh(frm) {
         frm.toggle_display("section_sync_preview", false);
         frm.trigger("update_primary_action");
-		frm.trigger("render_sync_log");
-    },
+		frm.trigger("order_by_table");
+	},
     onload_post_render(frm) {
 		frm.trigger("update_primary_action");
+	},
+	item_on_form_rendered: function(frm, cdt, cdn) {
+		console.log("Refresh Field")
 	},
     update_primary_action(frm) {
 		if (frm.is_dirty()) {
@@ -93,9 +90,19 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			} else {
 				frm.page.set_primary_action(__("Save"), () => frm.save());
 			}
+		} 
+		//valide if child table sync_log is empty
+		console.log(frm.doc.sync_log.length)
+		if (frm.doc.sync_log.length > 0) {
+			frm.toggle_display("section_sync_log_preview", true);
+			frm.disable_save();
+			frm.set_df_property("company_file", "read_only", 1);
+		} else {
+			frm.toggle_display("section_sync_log_preview", false);
 		}
 	},
 	start_sync(frm) {
+		frm.set_df_property("company_file", "read_only", 1);
 		frm.call({
 			method: "form_start_sync",
 			args: { company_sync_scheduler: frm.doc.name },
@@ -107,122 +114,54 @@ frappe.ui.form.on("Company Sync Scheduler", {
 		});
 		frm.toggle_display("section_sync_preview", true);
 	},
-	render_sync_log(frm) {
-		console.log("Render Sync Log")
-		console.log(frm.doc.name)
-		if (frm.is_new()) {
-			return;
-		}
-		frappe.call({
-			method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.get_sync_logs",
-			args: { company_sync_scheduler: frm.doc.name },
-			callback: function (r) {
-				console.log(r)
-				console.log(r.message.length)
-				if (r.message.length === 0) {
-					frm.toggle_display("section_sync_log_preview", false);
-					return;
-				}
-				frm.toggle_display("section_sync_log_preview", true);
-				const $wrapper = frm.get_field("sync_log_preview").$wrapper;
-				$wrapper.empty();
-
-				frm.disable_save();
-				let logs = r.message;
-				console.log(r)
-
-				const memberIdMap = {};
-
-				// Mapear cada log para crear una fila de la tabla
-				let rows = logs.map((log, index) => {
-					const selectId = `review-select-${index}`;
-					// Guardamos la correspondencia en el objeto
-					memberIdMap[selectId] = log.memberid;
-					return `<tr>
-						<td>${log.memberid}</td>
-						<td>${log.messages}</td>
-						<td>
-						<div class="control-input-wrapper">
-							<div class="control-input flex align-center">
-								<select id="${selectId}" type="text" autocomplete="off" class="input-with-feedback form-control ellipsis review-select">
-									<option></option>
-									<option value="Create Issue" ${log.review === 'Create Issue' ? 'selected' : ''} >Create Issue</option>
-									<option value="Portal Error" ${log.review === 'Portal Error' ? 'selected' : ''} >Portal Error</option>
-									<option value="Sync Error" ${log.review === 'Sync Error' ? 'selected' : ''} >Sync Error</option>
-								</select>
-								<div class="select-icon ">
-									<svg class="icon  icon-sm" style="" aria-hidden="true">
-										<use class="" href="#icon-select"></use>
-									</svg>
-								</div>
-							</div>
-							<div class="control-value like-disabled-input" style="display: none;">MySQL</div>
-							<p class="help-box small text-muted"></p>
-						</div>
-						</td>
-					</tr>`;
-				}).join('');
-
-				$(`
-					<table class="table table-bordered">
-						<tr class="text-muted">
-							<th width="20%">${__("Member ID")}</th>
-							<th width="65%">${__("Message")}</th>
-							<th width="15%">${__("Review")}</th>
-						</tr>
-						${rows}
-					</table>
-				`).appendTo($wrapper);
-
-				console.log(memberIdMap)
-
-				$wrapper.on('change', '.review-select', function() {
-					let newValue = $(this).val();
-					// Obtener el id único asignado
-					let selectID = $(this).attr('id');
-					// Buscar el member id en el objeto de correspondencia
-					let memberID = memberIdMap[selectID];
-
-
-					frappe.call({
-						method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.update_log_review",
-						args: { company_sync_scheduler: frm.doc.name, memberid: memberID, review: newValue },
-						callback: function (r) {
-							console.log("Update")
-						}
-					});
+	order_by_table(frm) {
+		if (frm.is_new()) return;
+	  
+		const $sync_log_wrapper = frm.get_field("sync_log").$wrapper;
+	  
+		function attachClickEvent() {
+		  let $header = $sync_log_wrapper.find('.grid-heading-row div[data-fieldname="messages"]').first();
+		  if ($header.length) {
+			// Aplicar estilo global (si no lo tienes ya en CSS)
+			$header.css({
+			  "cursor": "pointer",
+			  "text-decoration": "underline"
+			});
+	  
+			// Quitar cualquier listener previo y asignar el de toggle
+			$header.off('click.sort_toggle').on('click.sort_toggle', function() {
+			  // Almacenar el orden original la primera vez
+			  if (!frm._sync_log_original) {
+				frm._sync_log_original = frm.doc.sync_log.slice(); // Realiza una copia del arreglo
+			  }
+			  if (frm._is_sorted_desc) {
+				// Si ya está ordenado de forma descendente, restaurar el orden original
+				frm.doc.sync_log = frm._sync_log_original.slice();
+				frm._is_sorted_desc = false;
+			  } else {
+				// Ordenar de forma descendente
+				frm.doc.sync_log.sort((a, b) => {
+				  if (a.messages < b.messages) return 1;
+				  if (a.messages > b.messages) return -1;
+				  return 0;
 				});
-			},
-		});
-	},
-	show_sync_log(frm) {
-		frm.toggle_display("section_sync_log_preview", false);
-
-		if (frm.is_new() || frm.import_in_progress) {
-			return;
+				frm._is_sorted_desc = true;
+			  }
+			  // Refrescar el campo para actualizar la vista
+			  frm.refresh_field('sync_log');
+			});
+		  }
 		}
-
-		frappe.call({
-			method: "frappe.client.get_count",
-			args: {
-				doctype: "Company Sync Scheduler Log",
-				filters: {
-					data_import: frm.doc.name,
-				},
-			},
-			callback: function (r) {
-				let count = r.message;
-				if (count < 5000) {
-					frm.trigger("render_import_log");
-				} else {
-					frm.toggle_display("section_sync_log_preview", false);
-					//frm.add_custom_button(__("Export Import Log"), () =>
-					//	frm.trigger("export_import_log")
-					//);
-				}
-			},
+	  
+		// Asignar el listener inicialmente
+		attachClickEvent();
+	  
+		// MutationObserver para reactivar el listener cuando el grid se re-renderice
+		const observer = new MutationObserver(() => {
+		  attachClickEvent();
 		});
-	},
+		observer.observe($sync_log_wrapper.get(0), { childList: true, subtree: true });
+	},		  
 });
 
 function updateProgressBar(frm, percentage) {
@@ -239,6 +178,22 @@ function updateProgressBar(frm, percentage) {
 			'aria-valuemax': '100'
 		})
 		.text(`${percentage}%`)
+		.appendTo($progress);
+}
+
+function successProgressBar(frm) {
+	const $wrapper = frm.get_field("sync_preview").$wrapper;
+	$wrapper.empty();
+	
+	const $progress = $('<div class="progress">').appendTo($wrapper);
+	$('<div class="progress-bar progress-bar-striped progress-bar-animated bg-success">')
+		.attr({
+			'role': 'progressbar',
+			'style': `width: 100%`,
+			'aria-valuenow': '100',
+			'aria-valuemin': '0', 
+			'aria-valuemax': '100'
+		})
 		.appendTo($progress);
 }
 

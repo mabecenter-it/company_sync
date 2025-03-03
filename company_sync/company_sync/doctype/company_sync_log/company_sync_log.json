@@ -1,11 +1,12 @@
 {
  "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
  "creation": "2024-12-06 15:17:31.530507",
  "doctype": "DocType",
+ "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "company_sync",
-  "docname",
   "memberid",
   "messages",
   "review",
@@ -13,22 +14,6 @@
  ],
  "fields": [
   {
-   "fieldname": "company_sync",
-   "fieldtype": "Link",
-   "label": "Company Sync",
-   "options": "Company Sync Scheduler",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "docname",
-   "fieldtype": "Data",
-   "label": "Reference Name",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
-   "columns": 3,
    "fieldname": "messages",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -43,16 +28,18 @@
    "label": "Exception"
   },
   {
-   "columns": 1,
+   "bold": 1,
    "fieldname": "memberid",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "is_virtual": 1,
    "label": "Member ID",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1,
+   "width": "400"
   },
   {
-   "columns": 1,
    "fieldname": "review",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -63,10 +50,11 @@
  "in_create": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-28 15:44:38.634487",
+ "modified": "2025-03-03 13:18:22.752294",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [],
  "read_only": 1,

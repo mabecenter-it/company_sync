@@ -14,7 +14,7 @@ class SOUpdater:
         self.vtiger_client = vtiger_client
         self.company = company
         self.data_config = data_config
-        self.doc_name = doc_name
+        self.doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
         self.broker = broker
         self.logger = logger if logger is not None else logging.getLogger(__name__)
         self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
@@ -113,19 +113,13 @@ class SOUpdater:
                 return index
                 
     def update_logs(self, memberID, company, broker, error_log, index = 0):
-        frappe.get_doc({
-            "doctype": "Company Sync Log",
-            "log_index": "log_index",
-            "success": "success",
-            "company_sync": self.doc_name,
-            "row_indexes": index,
-            "docname": f"{memberID}-{frappe.utils.now()}",
+        self.doc_parent.append("sync_log", {
             "memberid": memberID,
             "messages": error_log,
-            "exception": "log_details.get('exception')",
-        }).db_insert()
+        })
+        self.doc_parent.save()
         frappe.db.commit() 
-        self.progress_observer.updateLog({'message': error_log, 'doc_name': self.doc_name, 'memberID': memberID, 'company': company, 'broker': broker})
+        self.progress_observer.updateLog({'message': error_log, 'doc_name': self.doc_parent.name, 'memberID': memberID, 'company': company, 'broker': broker})
         return index + 1
 
 
@@ -137,4 +131,6 @@ class SOUpdater:
             # Calcula el progreso en porcentaje
             progress = float((idx + 1) / total)
             # Guarda el progreso en caché
-            self.progress_observer.update(progress, {'doc_name': self.doc_name})
+            self.progress_observer.update(progress, {'doc_name': self.doc_parent.name})
+        
+        self.progress_observer.updateSuccess(1, {'doc_name': self.doc_parent.name})
