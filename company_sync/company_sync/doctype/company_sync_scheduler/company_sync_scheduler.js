@@ -72,7 +72,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
         frm.toggle_display("section_sync_preview", false);
         frm.trigger("update_primary_action");
 		frm.trigger("order_by_table");
-		frm.trigger("hide_index");
+		//frm.trigger("hide_index");
 	},
 	hide_index(frm) {
 		const $sync_log_wrapper = frm.get_field("sync_log").$wrapper;
