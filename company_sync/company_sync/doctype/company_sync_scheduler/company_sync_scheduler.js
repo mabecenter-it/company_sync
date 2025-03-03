@@ -45,6 +45,8 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			d.memberid = memberID;
 			d.messages = error_log;
 
+			console.log(d);
+
 			frm.refresh_field('sync_log');
 
 			
@@ -70,12 +72,25 @@ frappe.ui.form.on("Company Sync Scheduler", {
         frm.toggle_display("section_sync_preview", false);
         frm.trigger("update_primary_action");
 		frm.trigger("order_by_table");
+		frm.trigger("hide_index");
+	},
+	hide_index(frm) {
+		const $sync_log_wrapper = frm.get_field("sync_log").$wrapper;
+		console.log($sync_log_wrapper)
+		let $header_index = $sync_log_wrapper.find('.row-index');
+
+		$header_index.each(function(index, element) {
+			$(element).hide();
+		});
+
+		let $header_check = $sync_log_wrapper.find('.row-check');
+
+		$header_check.each(function(index, element) {
+			$(element).hide();
+		});
 	},
     onload_post_render(frm) {
 		frm.trigger("update_primary_action");
-	},
-	item_on_form_rendered: function(frm, cdt, cdn) {
-		console.log("Refresh Field")
 	},
     update_primary_action(frm) {
 		if (frm.is_dirty()) {
