@@ -98,9 +98,9 @@ class SOUpdater:
             return True
         return False
 
-    def validTerm(self, memberID, policyTermDate, salesOrderTermDateCRM):
+    def validTerm(self, memberID, policyTermDate, salesOrderTermDateCRM, problem):
         if policyTermDate and salesOrderTermDateCRM:
-            if policyTermDate != salesOrderTermDateCRM:
+            if policyTermDate != salesOrderTermDateCRM and not problem not in ('Problema Campaña'):
                 update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
 
     def update_orders(self, df):
