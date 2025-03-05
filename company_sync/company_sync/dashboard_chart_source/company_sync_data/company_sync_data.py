@@ -1,7 +1,7 @@
 import frappe 
 
 @frappe.whitelist()
-def get_data(filters):
+def get_data():
     
     return {
         "labels": ["A", "B", "C"], 
