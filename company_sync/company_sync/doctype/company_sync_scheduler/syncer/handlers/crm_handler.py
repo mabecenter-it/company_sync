@@ -3,13 +3,16 @@ import pandas as pd
 import logging
 from tqdm import tqdm
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.repositories.crm_repository import CRMRepository
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import update_logs, progress_observer
+
 
 class CRMHandler:
-    def __init__(self, company: str, broker: str):
+    def __init__(self, doc_name: str, company: str, broker: str):
         self.repo = CRMRepository(company, broker)
         self.company = company
         self.broker = broker
         self.logger = logging.getLogger(__name__)
+        self.doc_name = doc_name
     
     def fetch_data(self) -> pd.DataFrame:
         return self.repo.fetch_sales_orders()
@@ -17,12 +20,10 @@ class CRMHandler:
     def merge_data(self, df_crm: pd.DataFrame, df_csv: pd.DataFrame) -> pd.DataFrame:
         df_merged = pd.merge(df_crm, df_csv, on="memberID", how="outer", indicator=True)
         df_missing = df_merged[df_merged['_merge'] == 'left_only']
-        for _, row in tqdm(df_missing.iterrows(), total=len(df_missing), desc="Validando Órdenes de Venta..."):
+        total = len(df_missing)
+        for i, (_, row) in enumerate(tqdm(df_missing.iterrows(), total=len(df_missing), desc="Validando Órdenes de Venta..."), start=1):
             memberID = str(row['memberID'])
-            if not memberID:
-                salesOrder_no = str(row['salesOrder_no'])
-                self.logger.info("Se encontró una orden de venta pero no está en el portal", extra={'memberid': salesOrder_no})
-            else:
-                self.logger.info("Se encontró una orden de venta pero no está en el portal", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
+            progress = float((i + 1) / total)
+            progress_observer.update(progress, {'doc_name': self.doc_name})
+            update_logs(self.doc_name, memberID if memberID else str(row['salesOrder_no']), self.company, self.broker, "Se encontró una orden de venta pero no está en el portal")
         return df_csv
-    

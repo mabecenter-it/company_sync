@@ -6,19 +6,17 @@ from company_sync.company_sync.doctype.company_sync_scheduler.database.unit_of_w
 from sqlalchemy import text
 import frappe
 from sqlalchemy.orm import sessionmaker
-from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import last_day_of_month
-from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.frappe import FrappeProgressObserver
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import add_business_days, last_day_of_month, update_logs, progress_observer
 
 class SOUpdater:
     def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, doc_name: str, logger=None):
         self.vtiger_client = vtiger_client
         self.company = company
         self.data_config = data_config
-        self.doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
         self.broker = broker
+        self.doc_name = doc_name
         self.logger = logger if logger is not None else logging.getLogger(__name__)
         self.unit_of_work = UnitOfWork(lambda: sessionmaker(bind=get_engine())())
-        self.progress_observer = FrappeProgressObserver()
     
     def update_sales_order(self, memberID: str, paidThroughDate: str, salesOrderData: dict):
         try:
@@ -36,7 +34,7 @@ class SOUpdater:
             self.logger.error(f"Error updating memberID {memberID}: {e}")
             return None
 
-    def process_order(self, row, index):
+    def process_order(self, row):
         memberID = str(row['memberID'])
         paidThroughDateString = str(row.get('paidThroughDate', ''))
         policyTermDateString = str(row.get('policyTermDate', ''))
@@ -69,6 +67,8 @@ class SOUpdater:
                         salesOrderEffecDateCRM = results[25]
                         salesOrderBrokerCRM = results[16]
                         salesorder_no = results[1]
+                        tipoPago =  results[20]
+                        diaPago = results[21]
 
                         if problem == 'Problema Pago':
                             pass
@@ -78,59 +78,39 @@ class SOUpdater:
                                 [salesOrderData] = self.vtiger_client.doQuery(query_sales)
                                 if paidThroughDateCRM and paidThroughDate < paidThroughDateCRM:
                                     if not (self.company == 'Oscar' and paidThroughDateCRM >= paidThroughDate):   
-                                        index += 1                                  
                                         #self.logger.info(f"A la póliza le rebotó la fecha de pago", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                        self.update_logs(memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago", index)
+                                        update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
                                 elif not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
                                     response = self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesOrderData)
                                     if response and not response['success']:
-                                        index += 1 
                                         if not response['error']['message'] == "Permission to perform the operation is denied":
                                             #self.logger.info(f"No se encontró la orden de venta", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                            self.update_logs(memberID, self.company, self.broker, "No se encontró la orden de venta", index)
+                                            update_logs(self.doc_name, memberID, self.company, self.broker, "No se encontró la orden de venta")
                             else:
                                 if not salesOrderEffecDateCRM > datetime.date.today():
-                                    index += 1 
-                                    if not salesOrderBrokerCRM == 'BROKER ERROR':
+                                    if not salesOrderBrokerCRM == 'BROKER ERROR' and tipoPago in ("CALENDAR", "YES") and diaPago > add_business_days(datetime.date.today(), 3):
                                         #self.logger.info(f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                        self.update_logs(memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}", index)
+                                        update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
                         else:
-                            index += 1 
-                            if salesOrderTermDateCRM == policyTermDate:
+                            if not policyTermDate or salesOrderTermDateCRM == policyTermDate:
                                 #self.logger.info(f"No se encontró una orden de venta pero si está en el portal", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                                self.update_logs(memberID, self.company, self.broker, "No se encontró una orden de venta pero si está en el portal")
+                                update_logs(self.doc_name, memberID, self.company, self.broker, "No se encontró una orden de venta pero si está en el portal")
                             else:
-                                self.update_logs(memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
-                    elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1), index):
-                        index += 1 
+                                update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
+                    elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
                         #self.logger.info(f"La póliza no está en el crm", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                        self.update_logs(memberID, self.company, self.broker, "La póliza no está en el crm", index)
-                    return index
+                        update_logs(self.doc_name, memberID, self.company, self.broker, "La póliza no está en el crm")
             except Exception as e:
-                index += 1 
                 #self.logger.error(f"Error procesando memberID {memberID}: {e}", extra={'memberid': memberID, 'company': self.company, 'broker': self.broker})
-                self.update_logs(memberID, self.company, self.broker, f"Error procesando memberID {memberID}: {e}", index)
-                return index
-                
-    def update_logs(self, memberID, company, broker, error_log, index = 0):
-        self.doc_parent.append("sync_log", {
-            "memberid": memberID,
-            "messages": error_log,
-        })
-        self.doc_parent.save()
-        frappe.db.commit() 
-        self.progress_observer.updateLog({'message': error_log, 'doc_name': self.doc_parent.name, 'memberID': memberID, 'company': company, 'broker': broker})
-        return index + 1
-
+                update_logs(self.doc_name, memberID, self.company, self.broker, f"Error procesando memberID {memberID}: {e}")
 
     def update_orders(self, df):
         total = len(df)
-        index = 0
         for idx, row in df.iterrows():
-            self.process_order(row, index)
+            self.process_order(row,)
             # Calcula el progreso en porcentaje
             progress = float((idx + 1) / total)
             # Guarda el progreso en caché
-            self.progress_observer.update(progress, {'doc_name': self.doc_parent.name})
+            progress_observer.update(progress, {'doc_name': self.doc_name})
         
-        self.progress_observer.updateSuccess(1, {'doc_name': self.doc_parent.name})
+        progress_observer.updateSuccess(1, {'doc_name': self.doc_name})

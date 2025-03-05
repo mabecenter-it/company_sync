@@ -9,4 +9,4 @@ class AetnaStrategy(BaseStrategy):
     def apply_logic(self, df):
         df_normalize = df.rename(columns={v: k for k, v in self.fields.items()})
 
-        return df_normalize[df_normalize['policyStatus'] == 'Active' & df_normalize['Relationship'] == 'Self']
+        return df_normalize[(df_normalize['policyStatus'] == 'Active') & (df_normalize['Relationship'] == 'Self')]

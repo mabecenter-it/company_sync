@@ -1,5 +1,7 @@
 # File: company_sync/utils.py
 import datetime
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.frappe import FrappeProgressObserver
+import frappe
 
 def get_fields(company: str) -> dict:
     company = company.lower()
@@ -8,7 +10,8 @@ def get_fields(company: str) -> dict:
             'memberID': 'Issuer Assigned ID',
             'paidThroughDate': 'Paid Through Date',
             'policyTermDate': 'Broker Term Date',
-            'format': '%B %d, %Y'
+            'format': '%B %d, %Y',
+            'policyStatus': 'Policy Status'
         },
         'oscar': {
             'memberID': 'Member ID',
@@ -27,7 +30,8 @@ def get_fields(company: str) -> dict:
             'memberID': 'Subscriber_ID',
             'paidThroughDate': 'Paid_Through_Date',
             'policyTermDate': 'Broker_End_Date',
-            'format': '%m/%d/%Y'
+            'format': '%m/%d/%Y',
+            'policyStatus': 'Status'
         }
     }
     default = {
@@ -72,3 +76,25 @@ def last_day_of_month(any_day: datetime.date, date_format: str = '%B %d, %Y') ->
     next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
     last_day = next_month - datetime.timedelta(days=next_month.day)
     return last_day.strftime(date_format)
+
+progress_observer = FrappeProgressObserver()
+
+def update_logs(doc_name, memberID, company, broker, error_log):
+        doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
+        doc_parent.append("sync_log", {
+            "memberid": memberID,
+            "messages": error_log,
+        })
+        doc_parent.save()
+        frappe.db.commit() 
+        progress_observer.updateLog({'message': error_log, 'doc_name': doc_parent.name, 'memberID': memberID, 'company': company, 'broker': broker})
+
+def add_business_days(start_date, business_days):
+    current_date = start_date
+    days_added = 0
+    while days_added < business_days:
+        current_date += datetime.timedelta(days=1)
+        # En Python, Monday es 0 y Friday es 4; Saturday es 5 y Sunday es 6
+        if current_date.weekday() < 5:
+            days_added += 1
+    return current_date.day

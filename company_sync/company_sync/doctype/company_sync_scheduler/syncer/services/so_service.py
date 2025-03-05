@@ -7,7 +7,7 @@ from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils impor
 class SOService:
     def __init__(self, csv_path: str, company: str, broker: str, strategy, vtiger_client, doc_name, logger):
         self.csv_processor = CSVProcessor(csv_path, strategy)
-        self.crm_handler = CRMHandler(company, broker)
+        self.crm_handler = CRMHandler(doc_name, company, broker)
         data_config = get_fields(company)
         self.doc_name = doc_name
         self.so_updater = SOUpdater(vtiger_client, company, data_config, broker, doc_name, logger=logger)

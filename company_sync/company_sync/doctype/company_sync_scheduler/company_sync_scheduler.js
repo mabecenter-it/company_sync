@@ -35,7 +35,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 				frm.toggle_display("section_sync_log_preview", true);
 				frm._has_shown_sync_log_preview = true;
 			}
-
+			frm.toggle_display("section_sync_preview", true);
 			updateProgressBar(frm, percentage);
 			//reloadDocument(frm);
 		});
@@ -64,12 +64,11 @@ frappe.ui.form.on("Company Sync Scheduler", {
 		})
 	},
 	onload(frm) {
-		if (frm.is_new()) {
+		/* if (frm.is_new()) {
 			frm.toggle_display("section_sync_preview", false);
-		}
+		} */
 	},
 	refresh(frm) {
-        frm.toggle_display("section_sync_preview", false);
         frm.trigger("update_primary_action");
 		frm.trigger("order_by_table");
 		//frm.trigger("hide_index");
