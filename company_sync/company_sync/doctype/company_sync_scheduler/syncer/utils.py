@@ -27,7 +27,7 @@ def get_fields(company: str) -> dict:
             'format': '%m/%d/%Y'
         },
         'molina': {
-            'memberID': 'Subscriber_ID',
+            'memberID': 'HIX_ID',
             'paidThroughDate': 'Paid_Through_Date',
             'policyTermDate': 'Broker_End_Date',
             'format': '%m/%d/%Y',

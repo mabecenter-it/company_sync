@@ -7,6 +7,7 @@ from sqlalchemy import text
 import frappe
 from sqlalchemy.orm import sessionmaker
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import add_business_days, last_day_of_month, update_logs, progress_observer
+from tqdm import tqdm
 
 class SOUpdater:
     def __init__(self, vtiger_client, company: str, data_config: dict, broker: str, doc_name: str, logger=None):
@@ -104,10 +105,10 @@ class SOUpdater:
 
     def update_orders(self, df):
         total = len(df)
-        for idx, row in df.iterrows():
-            self.process_order(row,)
+        for i, (_, row) in enumerate(tqdm(df.iterrows(), total=len(df), desc="Validando Órdenes de Venta 2..."), start=1):
+            self.process_order(row)
             # Calcula el progreso en porcentaje
-            progress = float((idx + 1) / total)
+            progress = float(i / total)
             # Guarda el progreso en caché
             progress_observer.update(progress, {'doc_name': self.doc_name})
         

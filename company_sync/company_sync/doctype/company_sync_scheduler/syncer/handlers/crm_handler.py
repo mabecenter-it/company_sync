@@ -23,7 +23,7 @@ class CRMHandler:
         total = len(df_missing)
         for i, (_, row) in enumerate(tqdm(df_missing.iterrows(), total=len(df_missing), desc="Validando Órdenes de Venta..."), start=1):
             memberID = str(row['memberID'])
-            progress = float((i + 1) / total)
+            progress = float(i / total)
             progress_observer.update(progress, {'doc_name': self.doc_name})
             update_logs(self.doc_name, memberID if memberID else str(row['salesOrder_no']), self.company, self.broker, "Se encontró una orden de venta pero no está en el portal")
         return df_csv
