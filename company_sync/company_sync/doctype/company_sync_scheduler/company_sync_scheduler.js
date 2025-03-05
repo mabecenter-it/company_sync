@@ -112,7 +112,9 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			frm.disable_save();
 			frm.set_df_property("company_file", "read_only", 1);
 		} else {
-			frm.toggle_display("section_sync_log_preview", false);
+			frm.enable_save();
+			let label = frm.doc.status === "Pending" ? __("Start Sync") : __("Retry");
+			frm.page.set_primary_action(label, () => frm.events.start_sync(frm));
 		}
 	},
 	start_sync(frm) {
