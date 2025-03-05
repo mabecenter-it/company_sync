@@ -1,0 +1,13 @@
+{
+ "creation": "2025-03-05 16:15:53.047853",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2025-03-05 16:15:53.047853",
+ "modified_by": "Administrator",
+ "module": "Company Sync",
+ "name": "Company Sync Data",
+ "owner": "Administrator",
+ "source_name": "Company Sync Data",
+ "timeseries": 0
+}

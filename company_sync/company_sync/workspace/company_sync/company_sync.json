@@ -1,6 +1,11 @@
 {
- "charts": [],
- "content": "[{\"id\":\"mrDEL4UgQK\",\"type\":\"card\",\"data\":{\"card_name\":\"Storage\",\"col\":4}},{\"id\":\"CA-gxM4FvX\",\"type\":\"card\",\"data\":{\"card_name\":\"Core\",\"col\":4}}]",
+ "charts": [
+  {
+   "chart_name": "Sync Error Logs",
+   "label": "Sync Error Logs"
+  }
+ ],
+ "content": "[{\"id\":\"IWXTiXi7KK\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sync Error Logs\",\"col\":12}},{\"id\":\"mrDEL4UgQK\",\"type\":\"card\",\"data\":{\"card_name\":\"Storage\",\"col\":4}},{\"id\":\"CA-gxM4FvX\",\"type\":\"card\",\"data\":{\"card_name\":\"Core\",\"col\":4}}]",
  "creation": "2023-06-22 20:12:29.687295",
  "custom_blocks": [],
  "docstatus": 0,
@@ -71,7 +76,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-03-03 16:24:25.913852",
+ "modified": "2025-03-05 16:23:29.473287",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync",
