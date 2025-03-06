@@ -81,7 +81,7 @@ class SOUpdater:
                         if self.validPaid(paidThroughDate):
                             if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
                                 self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
-                        elif paidThroughDateCRM and paidThroughDate < paidThroughDateCRM:
+                        elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
                             update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
                         else:
                             if (salesOrderBrokerCRM != 'BROKER ERROR') and (tipoPago in ("CALENDAR", "YES") and diaPago > add_business_days(datetime.date.today(), 3))  and problem != 'Problema Pago':
@@ -94,7 +94,7 @@ class SOUpdater:
                 update_logs(self.doc_name, memberID, self.company, self.broker, f"Error procesando memberID {memberID}: {e}")
 
     def validPaid(self, paidThroughDate):
-        if paidThroughDate >= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date():
+        if paidThroughDate and paidThroughDate >= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date():
             return True
         return False
 

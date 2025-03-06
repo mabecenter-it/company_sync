@@ -47,6 +47,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			var d = frm.add_child("sync_log");
 			d.memberid = memberID;
 			d.messages = error_log;
+			console.log(frm._has_shown_sync_error_log_preview);
 
 			frm.refresh_field('sync_log');
 			
