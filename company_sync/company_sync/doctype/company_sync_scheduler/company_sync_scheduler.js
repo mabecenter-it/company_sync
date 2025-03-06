@@ -22,17 +22,13 @@ frappe.ui.form.on("Company Sync Log", "review", function(frm, cdt, cdn) {
 
 frappe.ui.form.on("Company Sync Scheduler", {
 	setup(frm) {
-		if (!frm._has_shown_sync_log_preview) {
-			frm._has_shown_sync_log_preview = false;
-		}
-
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
 			// Validar que el sync corresponda al documento actual
 			if (company_sync !== frm.doc.name) return;
 
 			// Solo la primera vez se muestra la sección
 			if (!frm._has_shown_sync_log_preview) {
-				frm.toggle_display("section_sync_log_preview", true);
+				frm.toggle_display("section_sync_preview", true);
 				frm._has_shown_sync_log_preview = true;
 			}
 			frm.toggle_display("section_sync_preview", true);
@@ -41,17 +37,16 @@ frappe.ui.form.on("Company Sync Scheduler", {
 		});
 		frappe.realtime.on("company_sync_error_log", ({ error_log, company_sync, memberID, company, broker }) => {
 
+			if (company_sync !== frm.doc.name) return;
+
+			if (!frm._has_shown_sync_error_log_preview) {
+				frm.toggle_display("section_sync_log_preview", true);
+				frm._has_shown_sync_error_log_preview = true;
+			}
+
 			var d = frm.add_child("sync_log");
 			d.memberid = memberID;
 			d.messages = error_log;
-
-			console.log(d);
-
-			frm.refresh_field('sync_log');
-
-			
-
-			if (company_sync !== frm.doc.name) return;
 
 			frm.refresh_field('sync_log');
 			
@@ -210,7 +205,11 @@ function successProgressBar(frm) {
 			'aria-valuemin': '0', 
 			'aria-valuemax': '100'
 		})
+		.text(`100%`)
 		.appendTo($progress);
+	
+	frm.doc.status = "Success";
+	frm.refresh_field("status");
 }
 
 function reloadDocument(frm) {
