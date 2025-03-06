@@ -63,8 +63,7 @@ class Syncer:
             vtiger_client = get_client()
             
             service = SOService(csv, company, broker, strategy, vtiger_client, self.doc_name, logger)
-            service.process()
-                
+            service.process()                
         except Exception as e:
             frappe.logger().error(f"Sync error: {str(e)}")
             

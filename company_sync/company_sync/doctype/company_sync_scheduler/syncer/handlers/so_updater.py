@@ -23,10 +23,10 @@ class SOUpdater:
         try:
             def getSOAllData(salesorder_no):
                 query_sales = f"SELECT * FROM SalesOrder WHERE salesorder_no = '{salesorder_no}' LIMIT 1;"
-                [salesOrderData] = self.vtiger_client.doQuery(query_sales)
-                return [salesOrderData]
+                salesOrderData = self.vtiger_client.doQuery(query_sales)
+                return salesOrderData
             
-            salesOrderData = getSOAllData(salesorder_no)
+            [salesOrderData] = getSOAllData(salesorder_no)
 
             if salesOrderData.get('cf_2261') != paidThroughDate:
                 salesOrderData['cf_2261'] = paidThroughDate
@@ -112,4 +112,4 @@ class SOUpdater:
             # Guarda el progreso en caché
             progress_observer.update(progress, {'doc_name': self.doc_name})
         
-        progress_observer.updateSuccess(1, {'doc_name': self.doc_name})
+        progress_observer.updateSuccess({'success': True, 'doc_name': self.doc_name})
