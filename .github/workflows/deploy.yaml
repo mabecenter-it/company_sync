@@ -108,7 +108,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Configurar el token directamente en la URL
           git remote set-url origin "https://${{ secrets.GH_PAT }}@github.com/mabecenter-it/argocd-app.git"
-          git add docker-compose.yml
+          git add latest/compose.yaml
           git commit -m "Update Docker image to ${{ env.FULL_TAG }}"
           git push origin company_sync
         env:
