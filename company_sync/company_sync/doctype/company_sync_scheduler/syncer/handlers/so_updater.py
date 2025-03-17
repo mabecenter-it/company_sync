@@ -78,7 +78,7 @@ class SOUpdater:
                         salesorder_no = results[1]
                         tipoPago =  results[20]
                         diaPago = results[21]
-                        if not (tipoPago in ("CALENDAR", "YES") and current_paid_date(diaPago).date() < add_business_days(current_paid_date(diaPago), 3).date()): 
+                        if not (tipoPago in ("CALENDAR", "YES") and datetime.date.today() < add_business_days(current_paid_date(diaPago), 3).date()): 
                             if (
                                 salesOrderBrokerCRM != 'BROKER ERROR' and
                                 salesOrderEffecDateCRM <= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date()
@@ -106,8 +106,8 @@ class SOUpdater:
         return False
 
     def validTerm(self, memberID, policyTermDate, salesOrderTermDateCRM, problem):
-        if policyTermDate and salesOrderTermDateCRM:
-            if policyTermDate != salesOrderTermDateCRM and not problem not in ('Problema Campaña'):
+        if policyTermDate and salesOrderTermDateCRM and not problem not in ('Problema Pago', 'Problema Campaña'):
+            if policyTermDate != salesOrderTermDateCRM:
                 update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
 
     def update_orders(self, df):

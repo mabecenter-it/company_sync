@@ -2,6 +2,8 @@
 import datetime
 from company_sync.company_sync.doctype.company_sync_scheduler.syncer.observer.frappe import FrappeProgressObserver
 import frappe
+from dateutil.relativedelta import relativedelta
+
 
 def get_fields(company: str) -> dict:
     company = company.lower()
@@ -81,11 +83,11 @@ progress_observer = FrappeProgressObserver()
 
 def current_paid_date(day: int) -> datetime:
         now = datetime.datetime.now()
+        paidDate = datetime.datetime(year=now.year, month=now.month, day=day)
         if 1 <= day <= 5:
-            return datetime.datetime(year=now.year, month=now.month+1, day=day)
+            return paidDate
         else:
-            return datetime.datetime(year=now.year, month=now.month, day=day)
-
+            return paidDate - relativedelta(months=1)
 
 def update_logs(doc_name, memberID, company, broker, error_log):
     doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
