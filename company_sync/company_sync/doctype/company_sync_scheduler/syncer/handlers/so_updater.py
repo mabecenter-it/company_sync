@@ -94,7 +94,8 @@ class SOUpdater:
                                     if problem not in ('Problema Pago', 'Problema Campaña'):
                                         update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
 
-                        self.validTerm(memberID, policyTermDate, salesOrderTermDateCRM, problem)
+                        if problem not in ('Problema Campaña'):
+                            self.validTerm(memberID, policyTermDate, salesOrderTermDateCRM, problem)
                     elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
                         update_logs(self.doc_name, memberID, self.company, self.broker, "La póliza no está en el crm")
             except Exception as e:
