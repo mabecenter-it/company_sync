@@ -79,15 +79,23 @@ def last_day_of_month(any_day: datetime.date, date_format: str = '%B %d, %Y') ->
 
 progress_observer = FrappeProgressObserver()
 
+def current_paid_date(day: int) -> datetime:
+        now = datetime.datetime.now()
+        if 1 <= day <= 5:
+            return datetime.datetime(year=now.year, month=now.month+1, day=day)
+        else:
+            return datetime.datetime(year=now.year, month=now.month, day=day)
+
+
 def update_logs(doc_name, memberID, company, broker, error_log):
-        doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
-        doc_parent.append("sync_log", {
-            "memberid": memberID,
-            "messages": error_log,
-        })
-        doc_parent.save()
-        frappe.db.commit() 
-        progress_observer.updateLog({'message': error_log, 'doc_name': doc_parent.name, 'memberID': memberID, 'company': company, 'broker': broker})
+    doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)
+    doc_parent.append("sync_log", {
+        "memberid": memberID,
+        "messages": error_log,
+    })
+    doc_parent.save()
+    frappe.db.commit() 
+    progress_observer.updateLog({'message': error_log, 'doc_name': doc_parent.name, 'memberID': memberID, 'company': company, 'broker': broker})
 
 def add_business_days(start_date, business_days):
     current_date = start_date
@@ -97,4 +105,4 @@ def add_business_days(start_date, business_days):
         # En Python, Monday es 0 y Friday es 4; Saturday es 5 y Sunday es 6
         if current_date.weekday() < 5:
             days_added += 1
-    return current_date.day
+    return current_date

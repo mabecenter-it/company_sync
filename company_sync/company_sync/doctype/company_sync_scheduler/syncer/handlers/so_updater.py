@@ -6,7 +6,7 @@ from company_sync.company_sync.doctype.company_sync_scheduler.database.unit_of_w
 from sqlalchemy import text
 import frappe
 from sqlalchemy.orm import sessionmaker
-from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import add_business_days, last_day_of_month, update_logs, progress_observer
+from company_sync.company_sync.doctype.company_sync_scheduler.syncer.utils import add_business_days, last_day_of_month, update_logs, progress_observer, current_paid_date
 from tqdm import tqdm
 
 class SOUpdater:
@@ -28,7 +28,7 @@ class SOUpdater:
             
             [salesOrderData] = getSOAllData(salesorder_no)
 
-            if salesOrderData.get('cf_2261') != paidThroughDate:
+            if salesOrderData.get('cf_2261') == paidThroughDate:
                 salesOrderData['cf_2261'] = paidThroughDate
                 salesOrderData['productid'] = '14x29415'
                 salesOrderData['assigned_user_id'] = '19x113'
@@ -67,26 +67,33 @@ class SOUpdater:
                           AND Month >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
                         LIMIT 1;
                     """
+                    self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), 'SO27800')
                     results = session.execute(text(query)).fetchone()
                     if results:
                         problem = results[10]
                         paidThroughDateCRM = results[12]
-                        salesOrderTermDateCRM = results[13]
+                        salesOrderTermDateCRM = results[26]
                         salesOrderEffecDateCRM = results[25]
                         salesOrderBrokerCRM = results[16]
                         salesorder_no = results[1]
                         tipoPago =  results[20]
                         diaPago = results[21]
+                        if not (tipoPago in ("CALENDAR", "YES") and current_paid_date(diaPago).date() < add_business_days(current_paid_date(diaPago), 3).date()): 
+                            if (
+                                salesOrderBrokerCRM != 'BROKER ERROR' and
+                                salesOrderEffecDateCRM <= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date()
+                            ):
+                                if self.validPaid(paidThroughDate):
+                                    if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
+                                        self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
+                                        if problem in ('Problema Pago', 'Problema Campaña'):
+                                            update_logs(self.doc_name, memberID, self.company, self.broker, f"Se actualiza pago hasta pero continúa como problema")
+                                elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
+                                    update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
+                                else:
+                                    if problem not in ('Problema Pago', 'Problema Campaña'):
+                                        update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
 
-                        if self.validPaid(paidThroughDate):
-                            if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
-                                self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
-                        elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
-                            update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
-                        else:
-                            if (salesOrderBrokerCRM != 'BROKER ERROR') and (tipoPago in ("CALENDAR", "YES") and diaPago > add_business_days(datetime.date.today(), 3))  and problem != 'Problema Pago':
-                                update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
-                    
                         self.validTerm(memberID, policyTermDate, salesOrderTermDateCRM, problem)
                     elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
                         update_logs(self.doc_name, memberID, self.company, self.broker, "La póliza no está en el crm")

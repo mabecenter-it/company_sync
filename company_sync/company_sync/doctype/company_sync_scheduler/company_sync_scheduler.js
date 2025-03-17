@@ -22,6 +22,7 @@ frappe.ui.form.on("Company Sync Log", "review", function(frm, cdt, cdn) {
 
 frappe.ui.form.on("Company Sync Scheduler", {
 	setup(frm) {
+		frm._has_shown_sync_error_log_preview = false
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
 			// Validar que el sync corresponda al documento actual
 			if (company_sync !== frm.doc.name) return;
