@@ -98,7 +98,7 @@ jobs:
       - name: Update values in infra Repo
         run: |
           # Actualizar solo el tag en el archivo existente
-          sed -i "s|^\(\s*image:\s*mabecenter/erpnext:\).*|\1${FULL_TAG}|" argocd-app/docker-compose.yml
+          sed -i "s|^\(\s*image:\s*mabecenter/erpnext:\).*|\1${FULL_TAG}|" argocd-app/latest/compose.yaml
 
       # Paso 8: Commit y push del nuevo archivo
       - name: Commit and Push Changes
