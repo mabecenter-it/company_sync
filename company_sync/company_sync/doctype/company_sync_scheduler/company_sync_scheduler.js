@@ -28,10 +28,10 @@ frappe.ui.form.on("Company Sync Scheduler", {
 
 			// Solo la primera vez se muestra la sección
 			if (!frm._has_shown_sync_log_preview) {
+				console.log("Acá activo section_sync_preview");
 				frm.toggle_display("section_sync_preview", true);
 				frm._has_shown_sync_log_preview = true;
 			}
-			frm.toggle_display("section_sync_preview", true);
 			updateProgressBar(frm, percentage);
 			//reloadDocument(frm);
 		});
@@ -40,6 +40,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			if (company_sync !== frm.doc.name) return;
 
 			if (!frm._has_shown_sync_error_log_preview) {
+				console.log("Acá activo section_sync_log_preview");
 				frm.toggle_display("section_sync_log_preview", true);
 				frm._has_shown_sync_error_log_preview = true;
 			}
@@ -47,7 +48,6 @@ frappe.ui.form.on("Company Sync Scheduler", {
 			var d = frm.add_child("sync_log");
 			d.memberid = memberID;
 			d.messages = error_log;
-			console.log(frm._has_shown_sync_error_log_preview);
 
 			frm.refresh_field('sync_log');
 			
@@ -67,6 +67,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 	refresh(frm) {
         frm.trigger("update_primary_action");
 		frm.trigger("order_by_table");
+		console.log("No debi entrar acá");
 		//frm.trigger("hide_index");
 	},
 	hide_index(frm) {
@@ -86,6 +87,7 @@ frappe.ui.form.on("Company Sync Scheduler", {
 	},
     onload_post_render(frm) {
 		frm.trigger("update_primary_action");
+		console.log("No debi entrar acá");
 	},
     update_primary_action(frm) {
 		if (frm.is_dirty()) {
@@ -105,12 +107,15 @@ frappe.ui.form.on("Company Sync Scheduler", {
 		console.log(frm.doc.sync_log.length)
 		if (frm.doc.sync_log.length > 0) {
 			frm.toggle_display("section_sync_log_preview", true);
+			frm._has_shown_sync_log_preview = false;
+			console.log("Acá active en update_primary_action -> section_sync_log_preview");
 			frm.disable_save();
 			frm.set_df_property("company_file", "read_only", 1);
 		} else {
 			frm.enable_save();
 			let label = frm.doc.status === "Pending" ? __("Start Sync") : __("Retry");
 			frm.page.set_primary_action(label, () => frm.events.start_sync(frm));
+			frm._has_shown_sync_error_log_preview = false;
 		}
 	},
 	start_sync(frm) {
@@ -124,7 +129,6 @@ frappe.ui.form.on("Company Sync Scheduler", {
 				frm.disable_save();
 			}
 		});
-		frm.toggle_display("section_sync_preview", true);
 	},
 	order_by_table(frm) {
 		if (frm.is_new()) return;

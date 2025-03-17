@@ -14,13 +14,14 @@
  ],
  "fields": [
   {
-   "columns": 4,
+   "columns": 6,
    "fieldname": "messages",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Messages",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "width": "200px"
   },
   {
    "fieldname": "exception",
@@ -39,7 +40,7 @@
    "reqd": 1
   },
   {
-   "columns": 1,
+   "columns": 2,
    "fieldname": "review",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -50,7 +51,7 @@
  "in_create": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-05 15:43:59.136791",
+ "modified": "2025-03-17 14:24:59.398587",
  "modified_by": "Administrator",
  "module": "Company Sync",
  "name": "Company Sync Log",
