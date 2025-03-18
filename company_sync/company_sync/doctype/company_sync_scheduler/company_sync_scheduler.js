@@ -67,8 +67,8 @@ frappe.ui.form.on("Company Sync Scheduler", {
 	refresh(frm) {
         frm.trigger("update_primary_action");
 		frm.trigger("order_by_table");
-		console.log("No debi entrar acá");
-		//frm.trigger("hide_index");
+		frm._has_shown_sync_log_preview = false;
+		frm._has_shown_sync_error_log_preview = false;
 	},
 	hide_index(frm) {
 		const $sync_log_wrapper = frm.get_field("sync_log").$wrapper;

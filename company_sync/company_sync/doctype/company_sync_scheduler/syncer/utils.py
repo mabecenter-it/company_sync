@@ -81,13 +81,29 @@ def last_day_of_month(any_day: datetime.date, date_format: str = '%B %d, %Y') ->
 
 progress_observer = FrappeProgressObserver()
 
-def current_paid_date(day: int) -> datetime:
-        now = datetime.datetime.now()
+def current_paid_date(day: int) -> datetime.datetime:
+    now = datetime.datetime.now()
+    
+    try:
+        # Try to create a date with the specified day
         paidDate = datetime.datetime(year=now.year, month=now.month, day=day)
-        if 1 <= day <= 5:
-            return paidDate
-        else:
+    except ValueError:
+        # If the day is out of range, set the paidDate to the last day of the current month
+        paidDate = datetime.datetime(year=now.year, month=now.month, day=1) + relativedelta(day=31)
+
+
+    # Si el día está entre 1 y 5, no restamos un mes
+    if 1 <= day <= 5:
+        return paidDate
+    else:
+        try:
+            # Intentamos restar un mes
             return paidDate - relativedelta(months=1)
+        except ValueError:
+            # Si hay un error por día fuera de rango, ajustamos el día al último del mes anterior
+            last_day_previous_month = (paidDate - relativedelta(day=31))
+            return last_day_previous_month
+            
 
 def update_logs(doc_name, memberID, company, broker, error_log):
     doc_parent = frappe.get_doc('Company Sync Scheduler', doc_name)

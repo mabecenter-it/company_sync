@@ -28,7 +28,7 @@ class SOUpdater:
             
             [salesOrderData] = getSOAllData(salesorder_no)
 
-            if salesOrderData.get('cf_2261') == paidThroughDate:
+            if paidThroughDate > salesOrderData.get('cf_2261'):
                 salesOrderData['cf_2261'] = paidThroughDate
                 salesOrderData['productid'] = '14x29415'
                 salesOrderData['assigned_user_id'] = '19x113'
@@ -67,49 +67,44 @@ class SOUpdater:
                           AND Month >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
                         LIMIT 1;
                     """
-                    self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), 'SO27800')
                     results = session.execute(text(query)).fetchone()
                     if results:
-                        problem = results[10]
-                        paidThroughDateCRM = results[12]
-                        salesOrderTermDateCRM = results[26]
-                        salesOrderEffecDateCRM = results[25]
-                        salesOrderBrokerCRM = results[16]
-                        salesorder_no = results[1]
-                        tipoPago =  results[20]
-                        diaPago = results[21]
-                        if not (tipoPago in ("CALENDAR", "YES") and datetime.date.today() < add_business_days(current_paid_date(diaPago), 3).date()): 
-                            if (
-                                salesOrderBrokerCRM != 'BROKER ERROR' and
-                                salesOrderEffecDateCRM <= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date()
-                            ):
-                                if self.validPaid(paidThroughDate):
-                                    if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
-                                        self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
-                                        if problem in ('Problema Pago', 'Problema Campaña'):
-                                            update_logs(self.doc_name, memberID, self.company, self.broker, f"Se actualiza pago hasta pero continúa como problema")
-                                elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
-                                    update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
-                                else:
-                                    if problem not in ('Problema Pago', 'Problema Campaña'):
-                                        update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
+                        problem, paidThroughDateCRM, salesOrderTermDateCRM, salesOrderEffecDateCRM = results[10], results[12], results[26], results[25]
+                        salesOrderBrokerCRM, salesorder_no, tipoPago, diaPago = results[16], results[1], results[20], results[21]
 
-                        if problem not in ('Problema Campaña'):
-                            self.validTerm(memberID, policyTermDate, salesOrderTermDateCRM, problem)
+                        if self.should_skip_update(tipoPago, diaPago) or self.should_skip_broker(salesOrderBrokerCRM, salesOrderEffecDateCRM):
+                            return
+                        
+                        if self.validPaid(paidThroughDate):
+                            if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
+                                self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
+                                if problem in ('Problema Pago', 'Problema Campaña'):
+                                    update_logs(self.doc_name, memberID, self.company, self.broker, f"Se actualiza pago hasta pero continúa como problema")
+                        elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
+                            update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
+                        elif problem not in ('Problema Pago', 'Problema Campaña'):
+                            update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
+
+                        if problem != 'Problema Campaña' and not self.validTerm(policyTermDate, salesOrderTermDateCRM):
+                            update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
+                            return
                     elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
                         update_logs(self.doc_name, memberID, self.company, self.broker, "La póliza no está en el crm")
             except Exception as e:
                 update_logs(self.doc_name, memberID, self.company, self.broker, f"Error procesando memberID {memberID}: {e}")
 
-    def validPaid(self, paidThroughDate):
-        if paidThroughDate and paidThroughDate >= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date():
-            return True
-        return False
+    def should_skip_update(self, tipoPago, diaPago):
+        return tipoPago in ("CALENDAR", "YES") and datetime.date.today() < add_business_days(current_paid_date(diaPago), 3).date()
 
-    def validTerm(self, memberID, policyTermDate, salesOrderTermDateCRM, problem):
-        if policyTermDate and salesOrderTermDateCRM and problem not in ('Problema Pago', 'Problema Campaña'):
-            if policyTermDate != salesOrderTermDateCRM:
-                update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
+    def should_skip_broker(self, salesOrderBrokerCRM, salesOrderEffecDateCRM):
+        last_day = datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date()
+        return salesOrderBrokerCRM == 'BROKER ERROR' or salesOrderEffecDateCRM > last_day
+
+    def validPaid(self, paidThroughDate):
+        return paidThroughDate and paidThroughDate >= datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date()
+
+    def validTerm(self, policyTermDate, salesOrderTermDateCRM):
+        return policyTermDate and salesOrderTermDateCRM and policyTermDate == salesOrderTermDateCRM
 
     def update_orders(self, df):
         total = len(df)
