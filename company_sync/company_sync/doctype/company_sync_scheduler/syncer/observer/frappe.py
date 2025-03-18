@@ -7,8 +7,8 @@ class FrappeProgressObserver(ProgressObserver):
             event,
             {
                 'percentage': f"{percentage * 100:.2f}",
-                'company_sync': context['doc_name']
-            }
+            },
+            docname=context['doc_name'],
         )
     
     def updateError(self, error_log: str, context: dict, event = 'company_sync_error_log'):
@@ -16,8 +16,8 @@ class FrappeProgressObserver(ProgressObserver):
             event,
             {
                 'error_log': error_log,
-                'company_sync': context['doc_name']
-            }
+            },
+            docname=context['doc_name'],
         )
     
     def updateLog(self, context: dict, event = 'company_sync_error_log'):
@@ -25,11 +25,11 @@ class FrappeProgressObserver(ProgressObserver):
             event,
             {
                 'error_log': context['message'],
-                'company_sync': context['doc_name'],
                 'memberID': context['memberID'],
                 'company': context['company'],
                 'broker': context['broker']
-            }
+            },
+            docname=context['doc_name'],
         )
     
     
@@ -38,8 +38,8 @@ class FrappeProgressObserver(ProgressObserver):
             event,
             {
                 'success': context['success'],
-                'company_sync': context['doc_name']
-            }
+            },
+            docname=context['doc_name'],
         )
 
 

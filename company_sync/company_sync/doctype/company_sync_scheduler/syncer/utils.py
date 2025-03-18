@@ -57,7 +57,7 @@ def conditional_update(company: str) -> dict:
 
 def calculate_paid_through_date(status: str, date_format: str = '%B %d, %Y') -> str:
     today = datetime.date.today()
-    if status == 'Active':
+    if status == 'Active' or status == 'Paid binder':
         return last_day_of_month(today, date_format)
     elif status == 'Delinquent':
         two_months_ago = (today.replace(day=1) - datetime.timedelta(days=1))

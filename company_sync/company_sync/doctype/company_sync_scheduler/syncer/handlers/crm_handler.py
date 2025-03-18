@@ -26,4 +26,4 @@ class CRMHandler:
             progress = float(i / total)
             progress_observer.update(progress, {'doc_name': self.doc_name})
             update_logs(self.doc_name, memberID if memberID else str(row['salesOrder_no']), self.company, self.broker, "Se encontró una orden de venta pero no está en el portal")
-        return df_merged[df_merged['_merge'] != 'right_only']
+        return df_merged[df_merged['_merge'] != 'left_only']
