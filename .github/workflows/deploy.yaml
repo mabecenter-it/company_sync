@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+        fetch-depth: 0
 
       - name: Print username
         run: 'echo "Registry username: ${{ secrets.REGISTRY_USERNAME }}"'
@@ -40,8 +42,8 @@ jobs:
       - name: Calculate Image Tag
         id: tag
         run: |
-          # Obtén el último tag de la rama (si no hay, usa "0.0.0")
-          LAST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          # Obtén el último tag de la rama
+          LAST_TAG=$(git describe --tags --abbrev=0)
           
           # Extraer las partes del tag
           IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
