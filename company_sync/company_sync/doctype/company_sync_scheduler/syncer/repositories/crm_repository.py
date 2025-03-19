@@ -22,5 +22,6 @@ class CRMRepository:
                   AND Month = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
                   AND rn = OV_Count;
             """
+            
             result = session.execute(text(query)).fetchall()
             return pd.DataFrame(result, columns=["memberID", "salesOrder_no", "Problema_2025"])
