@@ -52,7 +52,6 @@ jobs:
           # Crear un nuevo tag basado en el incremento
           NEW_TAG="$MAJOR.$MINOR.$PATCH"
 
-      
           # Obtener el SHA corto del commit actual
           COMMIT_SHA=$(git rev-parse --short HEAD)
           
