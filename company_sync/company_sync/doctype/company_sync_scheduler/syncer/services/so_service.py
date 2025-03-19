@@ -18,5 +18,5 @@ class SOService:
         if df_csv.empty:
             return
         df_crm = self.crm_handler.fetch_data()
-        df_right_only = self.crm_handler.merge_data(df_crm, df_csv)
-        self.so_updater.update_orders(df_csv)
+        df_no_right = self.crm_handler.merge_data(df_crm, df_csv)
+        self.so_updater.update_orders(df_no_right)

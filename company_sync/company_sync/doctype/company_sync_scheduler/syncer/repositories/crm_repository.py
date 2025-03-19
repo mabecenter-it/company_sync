@@ -14,7 +14,7 @@ class CRMRepository:
     def fetch_sales_orders(self) -> pd.DataFrame:
         with self.unit_of_work as session:
             query = f"""
-                SELECT member_id, so_no
+                SELECT member_id, so_no, Problema_2025
                 FROM vtigercrm_2022.calendar_2025_materialized
                 WHERE Compañía = '{self.company}'
                   AND Broker = '{'BEATRIZ SIERRA' if self.broker == 'BS' else 'ANA DANIELLA CORRALES'}'
@@ -23,4 +23,4 @@ class CRMRepository:
                   AND rn = OV_Count;
             """
             result = session.execute(text(query)).fetchall()
-            return pd.DataFrame(result, columns=["memberID", "salesOrder_no"])
+            return pd.DataFrame(result, columns=["memberID", "salesOrder_no", "Problema_2025"])
