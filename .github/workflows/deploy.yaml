@@ -66,6 +66,9 @@ jobs:
           echo "New semantic tag: $NEW_TAG"
           echo "Full tag with commit: $FULL_TAG"
 
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+
       - name: Build and Push Docker Image
         env:
           APPS_JSON_BASE64: ${{ secrets.APPS_JSON_BASE64 }}
