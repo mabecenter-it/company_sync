@@ -147,5 +147,5 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
 
 permissions:
-  contents: read
+  contents: write
   packages: write
