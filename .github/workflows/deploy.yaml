@@ -82,17 +82,20 @@ jobs:
           # Construir el nuevo tag
           FULL_TAG="${MAJOR}.${MINOR}.${PATCH}.${REVISION}"
           
-          # Exportar la variable para los siguientes steps
+           # Exportar la variable para los siguientes steps
           echo "FULL_TAG=$FULL_TAG" >> $GITHUB_ENV
           echo "Nuevo tag calculado: $FULL_TAG"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Configurar el token directamente en la URL
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-
+          
+          # Configurar la identidad de Git
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          
           # Crear el tag anotado
           git tag -a "$FULL_TAG" -m "Release $FULL_TAG"
+          
+          # Configurar el URL remoto usando el token para autenticarse
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          
           # Empujar el nuevo tag al repositorio remoto
           git push origin "$FULL_TAG"
 
