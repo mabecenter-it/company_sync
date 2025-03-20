@@ -100,7 +100,7 @@ jobs:
           sed -i 's/^__version__ = ".*"$/__version__ = "'${FULL_TAG}'"/' company_sync/__init__.py
           cat company_sync/__init__.py
           git add company_sync/__init__.py
-          git commit -m "Update __version__ in __init__.py to $FULL_TAG" || echo "No changes to commit"
+          git commit -m "Update __version__ in __init__.py to $FULL_TAG [skip ci]" || echo "No changes to commit"
           git push origin ${{ github.ref }}
           
           # Empujar el nuevo tag al repositorio remoto
