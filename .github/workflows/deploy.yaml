@@ -85,9 +85,7 @@ jobs:
           # Exportar la variable para los siguientes steps
           echo "FULL_TAG=$FULL_TAG" >> $GITHUB_ENV
           echo "Nuevo tag calculado: $FULL_TAG"
-      
-      - name: Create and Push New Tag
-        run: |
+          
           # Crear el tag anotado
           git tag -a "$FULL_TAG" -m "Release $FULL_TAG"
           # Empujar el nuevo tag al repositorio remoto
