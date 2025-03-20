@@ -25,6 +25,6 @@ class CRMHandler:
             memberID = str(row['memberID'])
             progress = float(i / total)
             progress_observer.update(progress, {'doc_name': self.doc_name})
-            if row['Problema_2025'] not in ('No portal', 'Problema Campaña', 'Problema Pago'):
+            if row['Problema_2025'] not in ('No portal', 'Problema Campaña', 'Problema Pago', 'Dejar cancelar MP'):
                 update_logs(self.doc_name, memberID if memberID else str(row['salesOrder_no']), self.company, self.broker, "Se encontró una orden de venta pero no está en el portal")
         return df_merged[df_merged['_merge'] != 'left_only']
