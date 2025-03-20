@@ -95,6 +95,13 @@ jobs:
           
           # Configurar el URL remoto usando el token para autenticarse
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+
+          echo "Actualizando company_sync/__init__.py con la versión $FULL_TAG"
+          sed -i 's/^__version__ = ".*"$/__version__ = "'${FULL_TAG}'"/' company_sync/__init__.py
+          cat company_sync/__init__.py
+          git add company_sync/__init__.py
+          git commit -m "Update __version__ in __init__.py to $FULL_TAG" || echo "No changes to commit"
+          git push origin ${{ github.ref }}
           
           # Empujar el nuevo tag al repositorio remoto
           git push origin "$FULL_TAG"
