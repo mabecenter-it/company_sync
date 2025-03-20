@@ -85,7 +85,14 @@ jobs:
           # Exportar la variable para los siguientes steps
           echo "FULL_TAG=$FULL_TAG" >> $GITHUB_ENV
           echo "Nuevo tag calculado: $FULL_TAG"
-          
+        
+      - name: Configure Git Identity
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+      
+      - name: Create and Push New Tag
+        run: |
           # Crear el tag anotado
           git tag -a "$FULL_TAG" -m "Release $FULL_TAG"
           # Empujar el nuevo tag al repositorio remoto
