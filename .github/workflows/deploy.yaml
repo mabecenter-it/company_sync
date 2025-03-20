@@ -38,29 +38,60 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      # Paso 4: Build y Push de la imagen Docker
       - name: Calculate Image Tag
         id: tag
         run: |
-          # Obtén el último tag de la rama
-          LAST_TAG=$(git describe --tags --abbrev=0)
+          # Obtener el último tag (se asume formato MAJOR.MINOR.PATCH.REVISION)
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          echo "Último tag: $LAST_TAG"
           
-          # Extraer las partes del tag
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
-                    
-          # Crear un nuevo tag basado en el incremento
-          NEW_TAG="$MAJOR.$MINOR.$PATCH"
+          # Separar las partes del tag en variables
+          IFS='.' read -r MAJOR MINOR PATCH REVISION <<< "$LAST_TAG"
           
-          # Crear el tag completo combinando NEW_TAG
-          FULL_TAG="${NEW_TAG}"
+          # Obtener el mensaje del último commit
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%s)
+          echo "Mensaje del último commit: $LAST_COMMIT_MSG"
           
-          # Exportar los tags
-          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          # Lógica para actualizar la versión según el tipo de commit:
+          # • MAJOR: Se incrementa si el commit contiene "BREAKING CHANGE".
+          # • MINOR: Se incrementa para commits de tipo "feat:".
+          # • PATCH: Se incrementa para commits de tipo "fix:" o "hot:".
+          # • REVISION: Se incrementa para commits de tipo "refactor:", "docs:", "chore:", "test:" o "ci:".
+          if [[ "$LAST_COMMIT_MSG" == *"BREAKING CHANGE"* ]]; then
+            echo "Commit con BREAKING CHANGE -> Incrementando MAJOR"
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            REVISION=0
+          elif [[ $LAST_COMMIT_MSG == feat:* ]]; then
+            echo "Commit de tipo feat: -> Incrementando MINOR"
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            REVISION=0
+          elif [[ $LAST_COMMIT_MSG == fix:* || $LAST_COMMIT_MSG == hot:* ]]; then
+            echo "Commit de tipo fix: u hot: -> Incrementando PATCH"
+            PATCH=$((PATCH + 1))
+            REVISION=0
+          elif [[ $LAST_COMMIT_MSG == refactor:* || $LAST_COMMIT_MSG == docs:* || $LAST_COMMIT_MSG == chore:* || $LAST_COMMIT_MSG == test:* || $LAST_COMMIT_MSG == ci:* ]]; then
+            echo "Commit de tipo refactor:, docs:, chore:, test: o ci: -> Incrementando REVISION"
+            REVISION=$((REVISION + 1))
+          else
+            echo "No se detectó un prefijo reconocido, manteniendo versión actual"
+          fi
+          
+          # Construir el nuevo tag
+          FULL_TAG="${MAJOR}.${MINOR}.${PATCH}.${REVISION}"
+          
+          # Exportar la variable para los siguientes steps
           echo "FULL_TAG=$FULL_TAG" >> $GITHUB_ENV
-          
-          echo "Previous tag: $LAST_TAG"
-          echo "New semantic tag: $NEW_TAG"
-          echo "Full tag with commit: $FULL_TAG"
+          echo "Nuevo tag calculado: $FULL_TAG"
+      
+      - name: Create and Push New Tag
+        run: |
+          # Crear el tag anotado
+          git tag -a "$FULL_TAG" -m "Release $FULL_TAG"
+          # Empujar el nuevo tag al repositorio remoto
+          git push origin "$FULL_TAG"
 
       - name: Build and Push Docker Image
         env:
