@@ -78,14 +78,14 @@ class SOUpdater:
                         if self.validPaid(paidThroughDate):
                             if not paidThroughDateCRM or paidThroughDate > paidThroughDateCRM:
                                 self.update_sales_order(memberID, paidThroughDate.strftime('%Y-%m-%d'), salesorder_no)
-                                if problem in ('Problema Pago', 'Problema Campaña'):
+                                if problem in ('Problema Pago', 'Problema Campaña', 'Dejar cancelar MP'):
                                     update_logs(self.doc_name, memberID, self.company, self.broker, f"Se actualiza pago hasta pero continúa como problema")
                         elif paidThroughDateCRM and paidThroughDate and paidThroughDate < paidThroughDateCRM:
                             update_logs(self.doc_name, memberID, self.company, self.broker, f"A la póliza le rebotó la fecha de pago")
-                        elif problem not in ('Problema Pago', 'Problema Campaña'):
+                        elif problem not in ('Problema Pago', 'Problema Campaña', 'Dejar cancelar MP'):
                             update_logs(self.doc_name, memberID, self.company, self.broker, f"Se encontró una orden de venta pero no está paga al {datetime.datetime.strptime(last_day_of_month(datetime.date.today()), '%B %d, %Y').date().strftime('%Y-%m-%d')}")
 
-                        if policyTermDate and problem != 'Problema Campaña' and not self.validTerm(policyTermDate, salesOrderTermDateCRM):
+                        if policyTermDate and problem not in ('Problema Campaña', 'Dejar cancelar MP') and not self.validTerm(policyTermDate, salesOrderTermDateCRM):
                             update_logs(self.doc_name, memberID, self.company, self.broker, f"En el portal la fecha de terminación es { policyTermDate.strftime('%m/%d/%Y') }")
                             return
                     elif (policyTermDate and policyTermDate > datetime.date(2025, 1, 1)) or (paidThroughDate and paidThroughDate > datetime.date(2025, 1, 1)):
