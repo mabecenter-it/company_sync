@@ -6,7 +6,4 @@ from frappe.model.document import Document
 
 
 class CompanySyncLog(Document):
-	def on_change(self):
-		# This method is called when the document child table is changed
-		# And execute autosave
-		self.save()
+	pass

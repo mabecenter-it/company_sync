@@ -20,6 +20,17 @@ frappe.ui.form.on("Company Sync Log", "review", function(frm, cdt, cdn) {
 	});
 });
 
+frappe.ui.form.on("Company Sync Log", "description", function(frm, cdt, cdn) {
+	var item = locals[cdt][cdn]; // this is where the magic happens
+	// locals is a global array that contains all the local documents opened by the user
+	// item is the row that the user is working with
+	// to what you need to do and update it back
+
+	console.log(item);
+
+	frm.save();
+});
+
 frappe.ui.form.on("Company Sync Scheduler", {
 	setup(frm) {
 		frappe.realtime.on("company_sync_refresh", ({ percentage, company_sync }) => {		
