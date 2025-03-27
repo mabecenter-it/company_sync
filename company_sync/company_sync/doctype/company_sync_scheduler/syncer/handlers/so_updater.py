@@ -21,12 +21,12 @@ class SOUpdater:
     
     def update_sales_order(self, memberID: str, paidThroughDate: str, salesorder_no: dict):
         try:
-            def getSOAllData(salesorder_no):
-                query_sales = f"SELECT * FROM SalesOrder WHERE salesorder_no = '{salesorder_no}' LIMIT 1;"
+            def getSOAllData(salesorder_no, memberID):
+                query_sales = f"SELECT * FROM SalesOrder WHERE salesorder_no = '{salesorder_no}' AND cf_2119 = '{memberID}' LIMIT 1;"
                 salesOrderData = self.vtiger_client.doQuery(query_sales)
                 return salesOrderData
             
-            [salesOrderData] = getSOAllData(salesorder_no)
+            [salesOrderData] = getSOAllData(salesorder_no, memberID)
 
             if paidThroughDate > salesOrderData.get('cf_2261'):
                 salesOrderData['cf_2261'] = paidThroughDate
