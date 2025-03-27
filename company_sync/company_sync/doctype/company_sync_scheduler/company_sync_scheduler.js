@@ -15,19 +15,12 @@ frappe.ui.form.on("Company Sync Log", "review", function(frm, cdt, cdn) {
 		method: "company_sync.company_sync.doctype.company_sync_scheduler.company_sync_scheduler.update_log_review",
 		args: { name: item.name, review: newValue },
 		callback: function (r) {
-			console.log("Update")
+			//console.log("Update")
 		}
 	});
 });
 
 frappe.ui.form.on("Company Sync Log", "description", function(frm, cdt, cdn) {
-	var item = locals[cdt][cdn]; // this is where the magic happens
-	// locals is a global array that contains all the local documents opened by the user
-	// item is the row that the user is working with
-	// to what you need to do and update it back
-
-	console.log(item);
-
 	frm.save();
 });
 
